@@ -1,7 +1,7 @@
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
-
+# sample comment
 class Draw(QWidget):
     def __init__(self, *argsd, **kwargs):
         super().__init__(*argsd, **kwargs)
