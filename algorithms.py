@@ -1,7 +1,7 @@
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
-
+import json
 # p = qpoint - bod má konstruktor QPoint(X,Y)
 # p.x()
 # p.y()
@@ -37,3 +37,7 @@ class Algorithms:
         if k % 2 == 1:
             return True
         return
+    def read_data(self,name):
+        with open(name, encoding="utf-8") as geojsonfile:
+            reader = json.load(geojsonfile)
+        return reader
