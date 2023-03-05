@@ -102,16 +102,6 @@ class Ui_MainForm(object):
         self.actionOpen.setText(_translate("MainForm", "Open"))
         self.actionExit.setText(_translate("MainForm", "Exit"))
 
-    def open(self):
-        a = Algorithms()
-        data_polygs = a.read_data("poland_duchies.geojson")
-        pol=QPolygonF()
-        for feature in data["features"]:
-            if isinstance(feature["geometry"]["coordinates"],list):
-                for coords in feature["geometry"]["coordinates"][0]:
-                    p=QPointF(coords[0],coords[1])
-                    pol.append(p)
-
     def switchSourceClick(self):
         self.Canvas.switchSource()
 
