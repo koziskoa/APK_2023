@@ -104,7 +104,7 @@ class Ui_MainForm(object):
 
     def open(self):
         a = Algorithms()
-        data = a.read_data("poland_duchies.geojson")
+        data_polygs = a.read_data("poland_duchies.geojson")
         pol=QPolygonF()
         for feature in data["features"]:
             if isinstance(feature["geometry"]["coordinates"],list):

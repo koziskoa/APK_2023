@@ -37,7 +37,3 @@ class Algorithms:
         if k % 2 == 1:
             return True
         return
-    def read_data(self,name):
-        with open(name, encoding="utf-8") as geojsonfile:
-            reader = json.load(geojsonfile)
-        return reader
