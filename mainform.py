@@ -103,16 +103,6 @@ class Ui_MainForm(object):
         self.actionOpen.setText(_translate("MainForm", "Open"))
         self.actionExit.setText(_translate("MainForm", "Exit"))
 
-    def open(self):
-        a = Algorithms()
-        data_polygs = a.read_data("poland_duchies.geojson")
-        pol=QPolygonF()
-        for feature in data["features"]:
-            if isinstance(feature["geometry"]["coordinates"],list):
-                for coords in feature["geometry"]["coordinates"][0]:
-                    p=QPointF(coords[0],coords[1])
-                    pol.append(p)
-
     def switchSourceClick(self):
         self.Canvas.switchSource()
 
@@ -148,7 +138,8 @@ class Ui_MainForm(object):
         # a = Algorithms()
         # polygons = a.openJson()
         print("Zdravic")
-        self.openDialogBox()
+        data = self.openDialogBox()
+        self.Canvas.iterate_coords(data)
 
     def openDialogBox(self):
         filename = QFileDialog.getOpenFileName()
@@ -156,7 +147,9 @@ class Ui_MainForm(object):
         print(path)
 
         with open(path, "r", encoding="utf-8") as f:
-            print(json.load(f))
+            data =json.load(f)
+        return(data)
+        
 
     def exitClick(self):
         sys.exit()

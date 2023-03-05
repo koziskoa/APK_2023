@@ -59,17 +59,11 @@ class Draw(QWidget):
         #get polygon
         return  self.__pol
     
-    def read_data(self, e:QFileOpenEvent, name):
-        with open(name, encoding="utf-8") as geojsonfile:
-            reader = json.load(geojsonfile)
-            polygons = iterate_coords(reader)
-        return polygons
-    
     def iterate_coords(self, data):
-        pol=self.__pol
         for feature in data["features"]:
             if isinstance(feature["geometry"]["coordinates"],list):
                 for coords in feature["geometry"]["coordinates"][0]:
                     p=QPointF(coords[0],coords[1])
-                    pol.append(p)
-            return pol
+                    self.__pol.append(p)
+            self.repaint()
+

@@ -1,0 +1,25 @@
+{
+	"type" : "FeatureCollection",
+	"name" : "MAP_MESTSKECASTI_P",
+	"crs" : {
+		"type" : "name",
+		"properties" : {
+			"name" : "EPSG:5514"
+		}
+	},
+	"features" : [
+			{
+            "type" : "Feature",
+            "geometry" : {
+                "type" : "Polygon",
+                "coordinates" : [
+                    [
+                        [ 2,2 ],
+                        [ 2,10],
+                        [ 10,10],
+                        [ 10,2]
+					]
+                ]
+            } 
+    }
+] }
