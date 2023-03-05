@@ -147,7 +147,8 @@ class Ui_MainForm(object):
         # a = Algorithms()
         # polygons = a.openJson()
         print("Zdravic")
-        self.openDialogBox()
+        data = self.openDialogBox()
+        self.Canvas.iterate_coords(data)
 
     def openDialogBox(self):
         filename = QFileDialog.getOpenFileName()
@@ -155,7 +156,9 @@ class Ui_MainForm(object):
         print(path)
 
         with open(path, "r", encoding="utf-8") as f:
-            print(json.load(f))
+            data =json.load(f)
+        return(data)
+        
 
 
 if __name__ == "__main__":
