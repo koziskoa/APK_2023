@@ -107,23 +107,29 @@ class Ui_MainForm(object):
         self.Canvas.switchSource()
 
     def analyzeClick(self):
+        #dialog = QtWidgets.QMessageBox()
+        #dialog.setWindowTitle("result of analysis")
         # get point and polygon
         q = self.Canvas.getPoint()
-        pol = self.Canvas.getPolygon()
+        pol_list = self.Canvas.getPolygonList()
 
         #analyze pozition
         a = Algorithms()
-        res = a.getPointPolygonPositionR(q, pol)
+        for i in range(len(pol_list)):
+            res = a.getPointPolygonPositionR(q, pol_list[i])
 
+            if res:
+                self.Canvas.is_highlighted[i] = True
+                self.Canvas.repaint()
+                #dialog.setText(f"In polygon numero{i}")
         #Print results
-        dialog = QtWidgets.QMessageBox()
-        dialog.setWindowTitle("result of analysis")
 
-        if res == 1:
-            dialog.setText("Inside")
-        else:
-            dialog.setText("Outside")
-        dialog.exec()
+
+        # if res == 1:
+        #     dialog.setText("In polygon numero")
+        # else:
+        #     dialog.setText("Outside")
+        # dialog.exec()
 
     def openFileClick(self):
         # dialog = QFileDialog()
@@ -149,7 +155,6 @@ class Ui_MainForm(object):
         with open(path, "r", encoding="utf-8") as f:
             data =json.load(f)
         return(data)
-        
 
     def exitClick(self):
         sys.exit()
