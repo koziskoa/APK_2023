@@ -86,6 +86,7 @@ class Ui_MainForm(object):
         QtCore.QMetaObject.connectSlotsByName(MainForm)
         self.actionPoint_Polygon.triggered.connect(self.switchSourceClick)
         self.actionPoint_and_polygon_position.triggered.connect(self.analyzeClick)
+        self.actionOpen.triggered.connect(self.open)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
@@ -101,6 +102,15 @@ class Ui_MainForm(object):
         self.actionOpen.setText(_translate("MainForm", "Open"))
         self.actionExit.setText(_translate("MainForm", "Exit"))
 
+    def open(self):
+        a = Algorithms()
+        data = a.read_data("poland_duchies.geojson")
+        pol=QPolygonF()
+        for feature in data["features"]:
+            if isinstance(feature["geometry"]["coordinates"],list):
+                for coords in feature["geometry"]["coordinates"][0]:
+                    p=QPointF(coords[0],coords[1])
+                    pol.append(p)
 
     def switchSourceClick(self):
         self.Canvas.switchSource()
