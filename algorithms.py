@@ -2,6 +2,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 import json
+from math import sqrt, degrees, acos
 # p = qpoint - bod má konstruktor QPoint(X,Y)
 # p.x()
 # p.y()
@@ -37,3 +38,29 @@ class Algorithms:
         if k % 2 == 1:
             return True
         return
+    def windingNumber(self, q, pol):
+        n = len(pol)
+
+        for i in range(n):
+            totalAngle = 0
+            #counting vector u (poit q - polygon vertex i)
+            ux = q.x() - pol[i].x()
+            uy = q.y() - pol[i].y()
+
+            #counting vecotr v (poit q - polygon vertex i+1)
+            vx = q.x() - pol[i+1%n].x()
+            vy = q.y() - pol[i+1%n].y()
+
+            #analyze position of the point
+            det = (ux*vy)-(vx*uy)
+            #counting angle of u and v
+            dotProduct = ux*vy + vx*uy
+            modOfVector1 = sqrt( ux*ux + uy*uy)*sqrt(vx*vx + vy*vy) 
+            angle = dotProduct/modOfVector1
+            #print("Cosθ =",angle)
+            angleInDegree = degrees(acos(angle))
+            if det > 0:
+                totalAngle += angleInDegree
+            else:
+                totalAngle -= angleInDegree
+
