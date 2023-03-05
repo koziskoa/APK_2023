@@ -86,6 +86,7 @@ class Ui_MainForm(object):
         QtCore.QMetaObject.connectSlotsByName(MainForm)
         self.actionPoint_Polygon.triggered.connect(self.switchSourceClick)
         self.actionPoint_and_polygon_position.triggered.connect(self.analyzeClick)
+        self.actionOpen.triggered.connect(self.openFileClick)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
@@ -100,7 +101,6 @@ class Ui_MainForm(object):
         self.actionPoint_and_polygon_position.setShortcut(_translate("MainForm", "Ctrl+A"))
         self.actionOpen.setText(_translate("MainForm", "Open"))
         self.actionExit.setText(_translate("MainForm", "Exit"))
-
 
     def switchSourceClick(self):
         self.Canvas.switchSource()
@@ -123,6 +123,32 @@ class Ui_MainForm(object):
         else:
             dialog.setText("Outside")
         dialog.exec()
+
+    def openFileClick(self):
+        # dialog = QFileDialog()
+        # dialog.setFileMode(QFileDialog.AnyFile)
+        # fname = QFileDialog.getOpenFileName(self, 'Open File', )
+        # dialog.setFilter("JSON files (*.json, *.geojson)")
+        # filenames = QStringList()
+        #
+        # if dialog.exec():
+        #     filenames = dialog.selectedFiles()
+        #
+        # a = Algorithms()
+        # polygons = a.openJson()
+        print("Zdravic")
+        data = self.openDialogBox()
+        self.Canvas.iterate_coords(data)
+
+    def openDialogBox(self):
+        filename = QFileDialog.getOpenFileName()
+        path = filename[0]
+        print(path)
+
+        with open(path, "r", encoding="utf-8") as f:
+            data =json.load(f)
+        return(data)
+        
 
 
 if __name__ == "__main__":
