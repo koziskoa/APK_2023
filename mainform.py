@@ -9,7 +9,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from draw import Draw
 from algorithms import *
-
+import sys
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
@@ -87,6 +87,7 @@ class Ui_MainForm(object):
         self.actionPoint_Polygon.triggered.connect(self.switchSourceClick)
         self.actionPoint_and_polygon_position.triggered.connect(self.analyzeClick)
         self.actionOpen.triggered.connect(self.openFileClick)
+        self.actionExit.triggered.connect(self.exitClick)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
@@ -157,6 +158,8 @@ class Ui_MainForm(object):
         with open(path, "r", encoding="utf-8") as f:
             print(json.load(f))
 
+    def exitClick(self):
+        sys.exit()
 
 if __name__ == "__main__":
     import sys
