@@ -70,6 +70,12 @@ class Algorithms:
             angleInDegree = degrees(acos(angle))
             if det > 0:
                 totalAngle += angleInDegree
-            else:
+            elif det < 0:
                 totalAngle -= angleInDegree
+            else:
+                pass
+                #ještě nevim
+        if totalAngle == 360:
+            return True
+        return
 
