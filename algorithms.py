@@ -30,7 +30,7 @@ class Algorithms:
             # z běžného seznamu tvoříme circular list - "kruhový seznam"
 
             #if (yi1r > 0) and (yir <= 0) or (yir > 0) and (yi1r <= 0):
-            if yi1r - yir == 0:
+            if (yi1r - yir) == 0:
                 continue
 
             xm = (xi1r * yir - xir * yi1r) / (yi1r - yir)
@@ -39,11 +39,11 @@ class Algorithms:
                 if xm < 0:
                     kl += 1
 
-            elif (yi1r > 0) != (yir > 0):
+            if (yi1r > 0) != (yir > 0):
                 #computing intersection
                 if xm > 0:
                     kr += 1
 
         if (kr % 2 == 1) or ((kl % 2) != (kr%2)):
             return True
-        return
+        return False
