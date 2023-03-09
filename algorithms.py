@@ -2,7 +2,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 import json
-from math import sqrt, degrees, acos
+from math import sqrt, pi, acos
 # p = qpoint - bod má konstruktor QPoint(X,Y)
 # p.x()
 # p.y()
@@ -40,7 +40,8 @@ class Algorithms:
         return
     def windingNumber(self, q, pol):
         n = len(pol)
-
+        totalAngle = 0
+        eps = 1.0e-10
         for i in range(n):
             #analyze position of the point
             #můžu použít stejnou proměnnou? a to ux a uy?..
@@ -52,7 +53,6 @@ class Algorithms:
             vy = q.y() - pol[i].y()
             det = (ux*vy)-(vx*uy)
             
-            totalAngle = 0
             #counting vector u (poit q - polygon vertex i)
             ux = pol[i].x() - q.x()
             uy = pol[i].y() - q.y()
@@ -61,21 +61,20 @@ class Algorithms:
             vx = pol[i+1%n].x() - q.x()
             vy = pol[i+1%n].y() - q.y()
 
-            
             #counting angle of u and v
-            dotProduct = ux*vy + vx*uy
-            modOfVector1 = sqrt( ux*ux + uy*uy)*sqrt(vx*vx + vy*vy) 
+            dotProduct = ux*vx + uy*vy
+            modOfVector1 = sqrt(ux**2 + uy**2)*sqrt(vx**2 + vy**2) 
             angle = dotProduct/modOfVector1
             #print("Cosθ =",angle)
-            angleInDegree = degrees(acos(angle))
+            angle = abs(acos(angle))
             if det > 0:
-                totalAngle += angleInDegree
+                totalAngle += angle
             elif det < 0:
-                totalAngle -= angleInDegree
+                totalAngle -= angle
             else:
                 pass
-                #ještě nevim
-        if totalAngle == 360:
+                #hranice polygonu ještě nevim
+        if abs(totalAngle - 2*pi) < eps:
             return True
-        return
+        return False
 
