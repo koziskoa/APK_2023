@@ -13,7 +13,7 @@ import sys
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
-        MainForm.resize(800, 600)
+        MainForm.resize(1000, 800)
         self.centralwidget = QtWidgets.QWidget(parent=MainForm)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -23,7 +23,7 @@ class Ui_MainForm(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.Canvas.sizePolicy().hasHeightForWidth())
-        self.Canvas.setSizePolicy(sizePolicy)
+        self.Canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.Canvas.setObjectName("Canvas")
         self.horizontalLayout.addWidget(self.Canvas)
         MainForm.setCentralWidget(self.centralwidget)
@@ -116,11 +116,9 @@ class Ui_MainForm(object):
         #analyze pozition
         a = Algorithms()
         for i in range(len(pol_list)):
-            res = a.windingNumber(q, pol_list[i])
-
-            if res:
-                self.Canvas.is_highlighted[i] = True
-                self.Canvas.repaint()
+            res = a.rayCrossingAlgorithm(q, pol_list[i])
+            self.Canvas.is_highlighted[i] = res
+            self.Canvas.repaint()
                 #dialog.setText(f"In polygon numero{i}")
         #Print results
 
@@ -153,16 +151,26 @@ class Ui_MainForm(object):
         print(path)
 
         with open(path, "r", encoding="utf-8") as f:
-            data =json.load(f)
+            data = json.load(f)
         return(data)
 
     def exitClick(self):
         sys.exit()
 
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+
+    def resizeEvent(self, e:QResizeEvent):
+        old_size = e.oldSize()
+        new_size = QSizeF(self.geometry().width(), self.geometry().height())
+        print("oldsize = {0}, newsize = {1}".format(old_size, new_size))
+        QMainWindow.resizeEvent(self, e)
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainForm = QtWidgets.QMainWindow()
+    MainForm = MainWindow()
     ui = Ui_MainForm()
     ui.setupUi(MainForm)
     MainForm.show()

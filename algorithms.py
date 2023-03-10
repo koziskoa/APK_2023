@@ -12,8 +12,9 @@ class Algorithms:
     def __init__(self):
         pass
 
-    def getPointPolygonPositionR(self, q, pol):
-        k = 0 #počet průsečíků
+    def rayCrossingAlgorithm(self, q, pol):
+        kr = 0 #počet průsečíků
+        kl = 0
         n = len(pol) # délka polygonu
 
         #process all vertices
@@ -22,22 +23,34 @@ class Algorithms:
             xir = pol[i].x() - q.x()
             yir = pol[i].y() - q.y()
 
+            if xir == 0 and yir == 0:
+                return -1
+
             xi1r = pol[(i+1)%n].x() - q.x()
             yi1r = pol[(i+1)%n].y() - q.y()
             # z běžného seznamu tvoříme circular list - "kruhový seznam"
 
-            #hledání vhodného segmentu - kt je prtnutý hor paprske, oba koncové body jsou v různých polorovinách
-            if(yi1r>0) and (yir<=0) or (yir > 0) and (yi1r <= 0):
-                #computing intersection
-                xm = (xi1r*yir - xir*yi1r)/(yi1r-yir)
+            #if (yi1r > 0) and (yir <= 0) or (yir > 0) and (yi1r <= 0):
+            if (yi1r - yir) == 0:
+                continue
 
-                #increment amount of intersections
+            xm = (xi1r * yir - xir * yi1r) / (yi1r - yir)
+            #hledání vhodného segmentu - kt je prtnutý hor paprske, oba koncové body jsou v různých polorovinách
+            if (yi1r < 0) != (yir < 0):
+                if xm < 0:
+                    kl += 1
+
+            if (yi1r > 0) != (yir > 0):
+                #computing intersection
                 if xm > 0:
-                    k+=1
-        #point is inside
-        if k % 2 == 1:
-            return True
-        return
+                    kr += 1
+
+        if (kr % 2 == 1):
+            return 1
+
+        elif (kl % 2) != (kr % 2):
+            return -1
+        return 0
     def windingNumber(self, q, pol):
         n = len(pol)
         totalAngle = 0
