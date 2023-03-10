@@ -11,7 +11,7 @@ class Algorithms:
     def __init__(self):
         pass
 
-    def getPointPolygonPositionR(self, q, pol):
+    def rayCrossingAlgorithm(self, q, pol):
         kr = 0 #počet průsečíků
         kl = 0
         n = len(pol) # délka polygonu

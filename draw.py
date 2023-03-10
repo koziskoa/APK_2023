@@ -4,6 +4,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 import json
+import shapefile
 from math import *
 # sample comment
 class Draw(QWidget):
@@ -13,10 +14,7 @@ class Draw(QWidget):
         #self.point_list = []
         self.__q = QPointF()
         self.is_highlighted = []
-
-        pass
-
-
+        self.__q = QPointF(-50, -50)
 
     def mousePressEvent(self, e:QMouseEvent):
         #Left mouse button click and its coords
@@ -32,7 +30,7 @@ class Draw(QWidget):
         self.__q.setX(x)
         self.__q.setY(y)
 
-        self.is_highlighted = [False] * len(self.__polyg_list)
+        self.is_highlighted = [0] * len(self.__polyg_list)
         #repaint screen
         self.repaint()
 
@@ -91,8 +89,8 @@ class Draw(QWidget):
         canvas_width = self.frameGeometry().width()
         for polygon in self.__polyg_list:
             for point in polygon:
-                new_x = (point.x() - xmin) * canvas_width/(xmax - xmin)
-                new_y = (point.y() - ymin) * canvas_height/(ymax - ymin)
+                new_x = int((point.x() - xmin) * canvas_width/(xmax - xmin))
+                new_y = int((point.y() - ymin) * canvas_height/(ymax - ymin))
                 point.setX(new_x)
                 point.setY(new_y)
 
@@ -117,12 +115,13 @@ class Draw(QWidget):
                 pol = QPolygonF()
                 if isinstance(feature["geometry"]["coordinates"], list):
                     for coords in feature["geometry"]["coordinates"][0]:
-                        p=QPointF(coords[0],coords[1])
+                        p=QPointF(int(coords[0]),int(coords[1]))
                         pol.append(p)
                         xmin, ymin, xmax, ymax = self.findBoundingPoints(p, xmin, ymin, xmax, ymax)
                     self.__polyg_list.append(pol)
                     self.is_highlighted.append(False)
             ymin, ymax = self.detectKrovak(ymin, ymax, epsg)
+
             self.resizePolygons(xmin, ymin, xmax, ymax)
             self.repaint()
         else:

@@ -106,8 +106,6 @@ class Ui_MainForm(object):
     def switchSourceClick(self):
         self.Canvas.switchSource()
 
-
-
     def analyzeClick(self):
         #dialog = QtWidgets.QMessageBox()
         #dialog.setWindowTitle("result of analysis")
@@ -118,7 +116,7 @@ class Ui_MainForm(object):
         #analyze pozition
         a = Algorithms()
         for i in range(len(pol_list)):
-            res = a.getPointPolygonPositionR(q, pol_list[i])
+            res = a.rayCrossingAlgorithm(q, pol_list[i])
 
             if res:
                 self.Canvas.is_highlighted[i] = True
@@ -155,7 +153,7 @@ class Ui_MainForm(object):
         print(path)
 
         with open(path, "r", encoding="utf-8") as f:
-            data =json.load(f)
+            data = json.load(f)
         return(data)
 
     def exitClick(self):
