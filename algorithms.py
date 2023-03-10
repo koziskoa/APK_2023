@@ -1,7 +1,6 @@
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
-import json
 from math import sqrt, pi, acos
 # p = qpoint - bod má konstruktor QPoint(X,Y)
 # p.x()
@@ -65,7 +64,9 @@ class Algorithms:
             vx = q.x() - pol[i].x()
             vy = q.y() - pol[i].y()
             det = (ux*vy)-(vx*uy)
-            
+            #if det == 0:
+                #return -1
+
             #counting vector u (poit q - polygon vertex i)
             ux = pol[i].x() - q.x()
             uy = pol[i].y() - q.y()
@@ -78,6 +79,8 @@ class Algorithms:
             dotProduct = ux*vx + uy*vy
             modOfVector1 = sqrt(ux**2 + uy**2)*sqrt(vx**2 + vy**2) 
             angle = dotProduct/modOfVector1
+            if angle > 1:
+                angle = 1
             #print("Cosθ =",angle)
             angle = abs(acos(angle))
             if det > 0:
@@ -90,6 +93,6 @@ class Algorithms:
             #print(angle, det)
             #print(totalAngle)
         if abs(abs(totalAngle) - 2*pi) < eps:
-            return True
-        return False
+            return 1
+        return 0
 

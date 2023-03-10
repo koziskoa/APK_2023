@@ -10,6 +10,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from draw import Draw
 from algorithms import *
 import sys
+import json
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
@@ -116,7 +117,7 @@ class Ui_MainForm(object):
         #analyze pozition
         a = Algorithms()
         for i in range(len(pol_list)):
-            res = a.rayCrossingAlgorithm(q, pol_list[i])
+            res = a.windingNumber(q, pol_list[i])
             self.Canvas.is_highlighted[i] = res
             self.Canvas.repaint()
                 #dialog.setText(f"In polygon numero{i}")
