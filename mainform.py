@@ -117,10 +117,8 @@ class Ui_MainForm(object):
         a = Algorithms()
         for i in range(len(pol_list)):
             res = a.rayCrossingAlgorithm(q, pol_list[i])
-
-            if res:
-                self.Canvas.is_highlighted[i] = True
-                self.Canvas.repaint()
+            self.Canvas.is_highlighted[i] = res
+            self.Canvas.repaint()
                 #dialog.setText(f"In polygon numero{i}")
         #Print results
 

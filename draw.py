@@ -47,7 +47,7 @@ class Draw(QWidget):
         #qp.setBrush(Qt.GlobalColor.yellow)
 
         for i in range(len(self.__polyg_list)):
-            if self.is_highlighted[i]:
+            if self.is_highlighted[i] == 1 or self.is_highlighted[i] == -1:
                 qp.setBrush(Qt.GlobalColor.cyan)
 
             else:
@@ -119,7 +119,7 @@ class Draw(QWidget):
                         pol.append(p)
                         xmin, ymin, xmax, ymax = self.findBoundingPoints(p, xmin, ymin, xmax, ymax)
                     self.__polyg_list.append(pol)
-                    self.is_highlighted.append(False)
+                    self.is_highlighted.append(0)
             ymin, ymax = self.detectKrovak(ymin, ymax, epsg)
 
             self.resizePolygons(xmin, ymin, xmax, ymax)

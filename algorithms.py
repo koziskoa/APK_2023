@@ -23,7 +23,7 @@ class Algorithms:
             yir = pol[i].y() - q.y()
 
             if xir == 0 and yir == 0:
-                return True
+                return -1
 
             xi1r = pol[(i+1)%n].x() - q.x()
             yi1r = pol[(i+1)%n].y() - q.y()
@@ -44,6 +44,9 @@ class Algorithms:
                 if xm > 0:
                     kr += 1
 
-        if (kr % 2 == 1) or ((kl % 2) != (kr%2)):
-            return True
-        return False
+        if (kr % 2 == 1):
+            return 1
+
+        elif (kl % 2) != (kr % 2):
+            return -1
+        return 0
