@@ -64,8 +64,6 @@ class Draw(QWidget):
     #     move point or add vertex
     #     self.__add_vertex = not(self.__add_vertex)
 
-
-
     def getPoint(self):
         #get point
         return  self.__q

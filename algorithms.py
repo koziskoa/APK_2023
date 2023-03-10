@@ -46,8 +46,8 @@ class Algorithms:
             #analyze position of the point
             #můžu použít stejnou proměnnou? a to ux a uy?..
             #v momentě kdy se spočítá det...tak už můžu vektory u a v použít pro nový výpočet že?
-            ux = pol[i+1%n].x() - pol[i].x()
-            uy = pol[i+1%n].y() - pol[i].y()
+            ux = pol[(i+1)%n].x() - pol[i].x()
+            uy = pol[(i+1)%n].y() - pol[i].y()
 
             vx = q.x() - pol[i].x()
             vy = q.y() - pol[i].y()
@@ -58,8 +58,8 @@ class Algorithms:
             uy = pol[i].y() - q.y()
 
             #counting vecotr v (poit q - polygon vertex i+1)
-            vx = pol[i+1%n].x() - q.x()
-            vy = pol[i+1%n].y() - q.y()
+            vx = pol[(i+1)%n].x() - q.x()
+            vy = pol[(i+1)%n].y() - q.y()
 
             #counting angle of u and v
             dotProduct = ux*vx + uy*vy
@@ -74,7 +74,9 @@ class Algorithms:
             else:
                 pass
                 #hranice polygonu ještě nevim
-        if abs(totalAngle - 2*pi) < eps:
+            #print(angle, det)
+            #print(totalAngle)
+        if abs(abs(totalAngle) - 2*pi) < eps:
             return True
         return False
 

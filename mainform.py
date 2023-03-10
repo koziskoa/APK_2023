@@ -116,7 +116,7 @@ class Ui_MainForm(object):
         #analyze pozition
         a = Algorithms()
         for i in range(len(pol_list)):
-            res = a.getPointPolygonPositionR(q, pol_list[i])
+            res = a.windingNumber(q, pol_list[i])
 
             if res:
                 self.Canvas.is_highlighted[i] = True
