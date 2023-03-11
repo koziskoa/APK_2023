@@ -201,7 +201,7 @@ class Ui_MainForm(object):
         self.Canvas.clearEvent()
 
     def aboutClick(self):
-        url = QUrl("https://github.com/koziskoa/point_in_polygon")
+        url = QUrl("https://github.com/koziskoa/APK_2023/tree/master/point_in_polygon")
         QDesktopServices.openUrl(url)
 
     def onEdgePopup(self):
