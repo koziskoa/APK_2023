@@ -186,7 +186,7 @@ class Ui_MainForm(object):
             return
 
     def openFile(self):
-        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory=".", filter="JSON file (*.json; *.geojson)")
+        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input_files/.", filter="JSON file (*.json; *.geojson)")
         if filename == "":
             return None
 
