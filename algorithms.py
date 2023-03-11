@@ -78,6 +78,7 @@ class Algorithms:
             #counting angle of u and v
             dotProduct = ux*vx + uy*vy
             modOfVector1 = abs(sqrt(ux**2 + uy**2)*sqrt(vx**2 + vy**2))
+            #print(dotProduct, modOfVector1)
             angle = dotProduct/modOfVector1
             if angle > 1:
                 angle = 1
@@ -88,7 +89,9 @@ class Algorithms:
             elif det < 0:
                 totalAngle -= angle
             if det == 0 and abs(angle-pi)< eps:
-                print("probiha iterace")
+                #(co když se trefím fakt přesně na přímku?)--- úvaha: kruh je větší než bod
+                print("HRANA")
+                print(dotProduct, modOfVector1)
                 return -1
                 #hranice polygonu ještě nevim
             #print(angle, det)
