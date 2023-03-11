@@ -1,3 +1,3 @@
-# Point in Polygon Analysis
+# Úkoly na prědmět Algoritmy počítačové kartografie
 
-## Dummy Text
+### Anna Kožíšková & Daniela Dančejová
