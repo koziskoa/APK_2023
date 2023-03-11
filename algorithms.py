@@ -77,7 +77,7 @@ class Algorithms:
 
             #counting angle of u and v
             dotProduct = ux*vx + uy*vy
-            modOfVector1 = sqrt(ux**2 + uy**2)*sqrt(vx**2 + vy**2) 
+            modOfVector1 = abs(sqrt(ux**2 + uy**2)*sqrt(vx**2 + vy**2))
             angle = dotProduct/modOfVector1
             if angle > 1:
                 angle = 1
@@ -87,8 +87,9 @@ class Algorithms:
                 totalAngle += angle
             elif det < 0:
                 totalAngle -= angle
-            else:
-                pass
+            if det == 0 and abs(angle-pi)< eps:
+                print("probiha iterace")
+                return -1
                 #hranice polygonu ještě nevim
             #print(angle, det)
             #print(totalAngle)
