@@ -33,6 +33,8 @@ class Algorithms:
             if (yi1r - yir) == 0:
                 continue
 
+            #if yi1r == 0 or yir == 0:
+
             xm = (xi1r * yir - xir * yi1r) / (yi1r - yir)
             #hledání vhodného segmentu - kt je prtnutý hor paprske, oba koncové body jsou v různých polorovinách
             if (yi1r < 0) != (yir < 0):

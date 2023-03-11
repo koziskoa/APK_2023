@@ -1,35 +1,25 @@
 import sys
-
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 import json
 import shapefile
 from math import *
-# sample comment
 class Draw(QWidget):
     def __init__(self, *argsd, **kwargs):
         super().__init__(*argsd, **kwargs)
         self.__polyg_list = []
-        #self.point_list = []
         self.__q = QPointF()
         self.is_highlighted = []
         self.__q = QPointF(-50, -50)
+        self.path = QPainterPath()
 
     def mousePressEvent(self, e:QMouseEvent):
         #Left mouse button click and its coords
         x = e.position().x()
         y = e.position().y()
-
-        #add point to polygon
-        #if self.__add_vertex:
-           #create point P se souřadnicemi X a Y
-            #p = QPointF(x,y)
-        #append p to polygon (list)
-            #self.__pol.append(p)
         self.__q.setX(x)
         self.__q.setY(y)
-
         self.is_highlighted = [0] * len(self.__polyg_list)
         #repaint screen
         self.repaint()
@@ -60,16 +50,16 @@ class Draw(QWidget):
 
         qp.end()
 
-    # def switchSource(self):
-    #     move point or add vertex
-    #     self.__add_vertex = not(self.__add_vertex)
-
     def getPoint(self):
         #get point
         return  self.__q
     def getPolygonList(self):
         #get polygon
         return  self.__polyg_list
+
+    def clearEvent(self):
+        self.__polyg_list = []
+        self.repaint()
 
     #def resizeWindowEvent(self, ):
 
@@ -102,7 +92,7 @@ class Draw(QWidget):
         else:
             return ymin, ymax
 
-    def iterate_coords(self, data):
+    def loadData(self, data):
         xmin = inf
         ymin = inf
         xmax = -inf

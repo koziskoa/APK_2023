@@ -13,7 +13,7 @@ import sys
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
-        MainForm.resize(1000, 800)
+        MainForm.setFixedSize(1000, 800)
         self.centralwidget = QtWidgets.QWidget(parent=MainForm)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -32,10 +32,10 @@ class Ui_MainForm(object):
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(parent=self.menubar)
         self.menuFile.setObjectName("menuFile")
-        self.menuDraw = QtWidgets.QMenu(parent=self.menubar)
-        self.menuDraw.setObjectName("menuDraw")
         self.menuAnalyze = QtWidgets.QMenu(parent=self.menubar)
         self.menuAnalyze.setObjectName("menuAnalyze")
+        self.menuHelp = QtWidgets.QMenu(parent=self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
         MainForm.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainForm)
         self.statusbar.setObjectName("statusbar")
@@ -43,20 +43,19 @@ class Ui_MainForm(object):
         self.toolBar = QtWidgets.QToolBar(parent=MainForm)
         self.toolBar.setObjectName("toolBar")
         MainForm.addToolBar(QtCore.Qt.ToolBarArea.TopToolBarArea, self.toolBar)
-        self.actionPoint_Polygon = QtGui.QAction(parent=MainForm)
-        self.actionPoint_Polygon.setCheckable(True)
-        self.actionPoint_Polygon.setObjectName("actionPoint_Polygon")
+
         self.actionClear = QtGui.QAction(parent=MainForm)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("icons/clear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionClear.setIcon(icon)
         self.actionClear.setObjectName("actionClear")
-        self.actionPoint_and_polygon_position = QtGui.QAction(parent=MainForm)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("icons/polygon.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionPoint_and_polygon_position.setIcon(icon1)
-        self.actionPoint_and_polygon_position.setObjectName("actionPoint_and_polygon_position")
+
+        self.actionRaycrossing = QtGui.QAction(parent=MainForm)
+        self.actionWindingnumber = QtGui.QAction(parent=MainForm)
         self.actionOpen = QtGui.QAction(parent=MainForm)
+        self.actionAbout = QtGui.QAction(parent=MainForm)
+        self.actionAbout.setObjectName("actionAbout")
+
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("icons/open_file.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionOpen.setIcon(icon2)
@@ -66,49 +65,79 @@ class Ui_MainForm(object):
         icon3.addPixmap(QtGui.QPixmap("icons/exit.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionExit.setIcon(icon3)
         self.actionExit.setObjectName("actionExit")
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("icons/raycrossing3.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionRaycrossing.setIcon(icon4)
+        self.actionRaycrossing.setObjectName("actionRayCrossing")
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("icons/windingnumber.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionWindingnumber.setIcon(icon5)
         self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
-        self.menuDraw.addAction(self.actionPoint_Polygon)
-        self.menuDraw.addAction(self.actionClear)
-        self.menuAnalyze.addAction(self.actionPoint_and_polygon_position)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("icons/about.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionAbout.setIcon(icon6)
+        self.menuAnalyze.addAction(self.actionRaycrossing)
         self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuDraw.menuAction())
+        self.menuAnalyze.addAction(self.actionWindingnumber)
         self.menubar.addAction(self.menuAnalyze.menuAction())
+        self.menuAnalyze.addSeparator()
+        self.menuAnalyze.addAction(self.actionClear)
+        self.menubar.addAction(self.menuAnalyze.menuAction())
+
+        self.menuHelp.addAction(self.actionAbout)
+        self.menubar.addAction(self.menuHelp.menuAction())
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionPoint_and_polygon_position)
-        self.toolBar.addSeparator()
+
         self.toolBar.addAction(self.actionClear)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionExit)
+        self.toolBar.addSeparator()
+
+        self.buttonRC = QtWidgets.QRadioButton(text="Ray Crossing Algorithm", checkable=True)
+        self.buttonWN = QtWidgets.QRadioButton(text="Winding Number Algorithm", checkable=True)
+        self.buttonRC.clicked.connect(self.analyzeRayCrossing)
+        self.buttonWN.clicked.connect(self.analyzeWindingNumber)
+        self.group = QtWidgets.QButtonGroup(exclusive=True)
+
+        for button in (self.buttonRC, self.buttonWN):
+            self.toolBar.addWidget(button)
+            self.group.addButton(button)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
-        self.actionPoint_Polygon.triggered.connect(self.switchSourceClick)
-        self.actionPoint_and_polygon_position.triggered.connect(self.analyzeClick)
+        #self.actionPoint_Polygon.triggered.connect(self.switchSourceClick)
+
+        self.actionRaycrossing.triggered.connect(self.analyzeRayCrossing)
+        self.actionWindingnumber.triggered.connect(self.analyzeWindingNumber)
+        self.actionAbout.triggered.connect(self.aboutClick)
+
+        self.buttonRC.clicked.connect(self.analyzeRayCrossing)
+        self.buttonWN.clicked.connect(self.analyzeWindingNumber)
+        self.buttonRC.setToolTip("Determine the point's position using Ray Crossing Algorithm")
+        self.buttonWN.setToolTip("Determine the point's position using Winding Number Algorithm")
         self.actionOpen.triggered.connect(self.openFileClick)
         self.actionExit.triggered.connect(self.exitClick)
+        self.actionClear.triggered.connect(self.clearClick)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
-        MainForm.setWindowTitle(_translate("MainForm", "MainWindow"))
+        MainForm.setWindowTitle(_translate("MainForm", "Point in Polygon Analyser"))
         self.menuFile.setTitle(_translate("MainForm", "File"))
-        self.menuDraw.setTitle(_translate("MainForm", "Draw"))
         self.menuAnalyze.setTitle(_translate("MainForm", "Analyze"))
+        self.menuHelp.setTitle(_translate("MainForm", "Help"))
         self.toolBar.setWindowTitle(_translate("MainForm", "toolBar"))
-        self.actionPoint_Polygon.setText(_translate("MainForm", "Point/Polygon"))
         self.actionClear.setText(_translate("MainForm", "Clear"))
-        self.actionPoint_and_polygon_position.setText(_translate("MainForm", "Point and polygon position"))
-        self.actionPoint_and_polygon_position.setShortcut(_translate("MainForm", "Ctrl+A"))
+        self.actionRaycrossing.setText(_translate("MainForm", "Ray Crossing Algorithm"))
+        self.actionWindingnumber.setText(_translate("MainForm", "Winding Number Algorithm"))
+        self.actionAbout.setText(_translate("MainForm", "About..."))
+        #self.actionPoint_and_polygon_position.setShortcut(_translate("MainForm", "Ctrl+A"))
         self.actionOpen.setText(_translate("MainForm", "Open"))
         self.actionExit.setText(_translate("MainForm", "Exit"))
 
-    def switchSourceClick(self):
-        self.Canvas.switchSource()
-
-    def analyzeClick(self):
-        #dialog = QtWidgets.QMessageBox()
-        #dialog.setWindowTitle("result of analysis")
+    def analyzeRayCrossing(self):
         # get point and polygon
         q = self.Canvas.getPoint()
         pol_list = self.Canvas.getPolygonList()
@@ -119,58 +148,59 @@ class Ui_MainForm(object):
             res = a.rayCrossingAlgorithm(q, pol_list[i])
             self.Canvas.is_highlighted[i] = res
             self.Canvas.repaint()
-                #dialog.setText(f"In polygon numero{i}")
-        #Print results
+        if -1 in self.Canvas.is_highlighted:
+            self.onEdgePopup()
 
+    def analyzeWindingNumber(self):
+        # get point and polygon
+        q = self.Canvas.getPoint()
+        pol_list = self.Canvas.getPolygonList()
 
-        # if res == 1:
-        #     dialog.setText("In polygon numero")
-        # else:
-        #     dialog.setText("Outside")
-        # dialog.exec()
+        # analyze pozition
+        a = Algorithms()
+        for i in range(len(pol_list)):
+            res = a.windingNumber(q, pol_list[i])
+            self.Canvas.is_highlighted[i] = res
+            self.Canvas.repaint()
+
+        if -1 in is_highlighted:
+            self.onEdgePopup()
 
     def openFileClick(self):
-        # dialog = QFileDialog()
-        # dialog.setFileMode(QFileDialog.AnyFile)
-        # fname = QFileDialog.getOpenFileName(self, 'Open File', )
-        # dialog.setFilter("JSON files (*.json, *.geojson)")
-        # filenames = QStringList()
-        #
-        # if dialog.exec():
-        #     filenames = dialog.selectedFiles()
-        #
-        # a = Algorithms()
-        # polygons = a.openJson()
-        print("Zdravic")
-        data = self.openDialogBox()
-        self.Canvas.iterate_coords(data)
+        data = self.openFile()
+        if data == None:
+            return
+        self.Canvas.loadData(data)
 
-    def openDialogBox(self):
-        filename = QFileDialog.getOpenFileName()
-        path = filename[0]
-        print(path)
+    def openFile(self):
+        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory=".", filter="JSON file (*.json)")
+        if filename == "":
+            return None
 
-        with open(path, "r", encoding="utf-8") as f:
+        with open(filename, "r", encoding="utf-8") as f:
             data = json.load(f)
-        return(data)
+            return(data)
 
     def exitClick(self):
         sys.exit()
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
+    def clearClick(self):
+        self.Canvas.clearEvent()
 
-    def resizeEvent(self, e:QResizeEvent):
-        old_size = e.oldSize()
-        new_size = QSizeF(self.geometry().width(), self.geometry().height())
-        print("oldsize = {0}, newsize = {1}".format(old_size, new_size))
-        QMainWindow.resizeEvent(self, e)
+    def aboutClick(self):
+        url = QUrl("https://github.com/koziskoa/point_in_polygon")
+        QDesktopServices.openUrl(url)
+
+    def onEdgePopup(self):
+        dlg = QtWidgets.QMessageBox()
+        dlg.setWindowTitle("Position Report")
+        dlg.setText("Point is positioned on an edge")
+        dlg.exec()
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainForm = MainWindow()
+    MainForm = QMainWindow()
     ui = Ui_MainForm()
     ui.setupUi(MainForm)
     MainForm.show()
