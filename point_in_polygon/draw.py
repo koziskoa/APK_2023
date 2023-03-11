@@ -85,11 +85,9 @@ class Draw(QWidget):
             # Paint cyan if point is on an edge or inside a polygon
             if self.polyg_status[i] == 1 or self.polyg_status[i] == -1:
                 qp.setBrush(Qt.GlobalColor.cyan)
-
             # Paint yellow if point is outside a polygon or no analysis has been done
             else:
                 qp.setBrush(Qt.GlobalColor.yellow)
-
             qp.drawPolygon(self.__polyg_list[i])
 
         # Set point attributes
@@ -140,7 +138,7 @@ class Draw(QWidget):
                 point.setY(new_y)
 
     def loadData(self, data):
-        """Loads input JSON file."""
+        """Loads input JSON or GeoJSON file."""
         # Initialize min and max coordinates to compute bounding box
         xmin = inf
         ymin = inf
