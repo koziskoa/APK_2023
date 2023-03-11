@@ -42,9 +42,6 @@ class Draw(QWidget):
     resizePolygons(xmin, ymin, xmax, ymax):
         Resizes input data to fit to display.
 
-    detectKrovak(ymin, ymax, epsg):
-        Changes coordinates if input has Krovak's projection
-
     loadData(data):
         Loads input JSON file.
     """
@@ -142,17 +139,6 @@ class Draw(QWidget):
                 point.setX(new_x)
                 point.setY(new_y)
 
-    def detectKrovak(self, ymin, ymax, epsg):
-        """Changes coordinates if input has Krovak's projection."""
-        if epsg == "EPSG:5514":
-            # Swap necessary coordinates
-            krovak_ymin = ymax
-            krovak_ymax = ymin
-            return krovak_ymin, krovak_ymax
-            # Return input coordinates if any other projection
-        else:
-            return ymin, ymax
-
     def loadData(self, data):
         """Loads input JSON file."""
         # Initialize min and max coordinates to compute bounding box
@@ -160,8 +146,6 @@ class Draw(QWidget):
         ymin = inf
         xmax = -inf
         ymax = -inf
-        # Get coordinate system of input
-        epsg = data["crs"]["properties"]["name"]
 
         # Check first feature for key coordinates
         if "coordinates" in data["features"][0]["geometry"]:
@@ -180,15 +164,11 @@ class Draw(QWidget):
                     # Append created polygon to polygon list, set its status to 0 (not highlighted)
                     self.__polyg_list.append(pol)
                     self.polyg_status.append(0)
-            # Swap y coordinates if input has Krovak's projection
-            ymin, ymax = self.detectKrovak(ymin, ymax, epsg)
+            # Swap y coordinates according to Krovak's projection
+            ymin, ymax = ymax, ymin
             # Resize polygons to fit to display
             self.resizePolygons(xmin, ymin, xmax, ymax)
             self.repaint()
         # Alert if no coordinates have been found
         else:
-            dlg = QMessageBox()
-            dlg.setWindowTitle("Error Message")
-            dlg.setText("Invalid JSON file")
-            dlg.exec()
-            return None
+            return False

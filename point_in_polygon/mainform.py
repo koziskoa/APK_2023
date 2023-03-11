@@ -177,12 +177,16 @@ class Ui_MainForm(object):
         if data == None:
             return
         self.Canvas.clearEvent()
-        check = self.Canvas.loadData(data)
-        if check == None:
+        correct_data = self.Canvas.loadData(data)
+        if correct_data == False:
+            dlg = QtWidgets.QMessageBox()
+            dlg.setWindowTitle("Error Message")
+            dlg.setText("Invalid JSON file")
+            dlg.exec()
             return
 
     def openFile(self):
-        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory=".", filter="JSON file (*.json)")
+        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory=".", filter="JSON file (*.json; *.geojson)")
         if filename == "":
             return None
 
