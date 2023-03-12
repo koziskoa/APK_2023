@@ -13,6 +13,12 @@ class Algorithms:
 
     windingNumberAlgorithm(q, pol):
         Determines the point location by using Winding Number Algorithm.
+
+    computeVector(p1, p2):
+        Returns vector between two points.
+    
+    computeAngle(ax,ay,bx,by):
+        Returns angle of two vecotrs.
     """
     def __init__(self):
         pass
@@ -26,7 +32,7 @@ class Algorithms:
                 pol(QPolygonF): Polygon formed by vertices with x, y coordinates.
 
             Returns:
-                -1 (int): Point is located on the edge of the polygon.
+               -1 (int): Point is located on the edge of the polygon.
                 1 (int): Point is located inside the polygon.
                 0 (int): Point is located outside the polygon.
         """
@@ -38,16 +44,14 @@ class Algorithms:
         # Process all vertices
         for i in range (n):
             # Reduce coordinates
-            xir = pol[i].x() - q.x()
-            yir = pol[i].y() - q.y()
+            xir, yir = Algorithms.computeVector(pol[i], q)
 
             # Check if point is located on a vertex
             if xir == 0 and yir == 0:
                 return -1
 
             # Reduce coordinates of the next vertex
-            xi1r = pol[(i+1)%n].x() - q.x()
-            yi1r = pol[(i+1)%n].y() - q.y()
+            xi1r, yi1r = Algorithms.computeVector(pol[(i+1)%n], q)
 
             # Check for horizontal edge
             if (yi1r - yir) == 0:
@@ -81,54 +85,75 @@ class Algorithms:
             return 0
 
     def windingNumberAlgorithm(q:QPoint, pol:QPolygonF):
-        #initialization of variables: lenght of one polygon, sum of angles, threshold value
+        """
+        Winding Number Algorithm.
+
+            Parameters:
+                q (QPoint): Point represented by x, y coordinates.
+                pol(QPolygonF): Polygon formed by vertices with x, y coordinates.
+            Returns:
+               -1 (int): Point is located on the edge of the polygon.
+                1 (int): Point is located inside the polygon.
+                0 (int): Point is located outside the polygon
+        """
+        # initialization of variables: lenght of one polygon, sum of angles, threshold value
         n = len(pol)
         total_angle = 0
         EPS = 1.0e-10
 
-        #iterating trough all vertices 
+        #iterate through all vertices 
         for i in range(n):
             #point is vertex => located on edge
             if (q == pol[i]) or (q == pol[(i+1)%n]):
                 return -1
             
-           #counting determinant to analyze position of the point 
-            ux = pol[(i+1)%n].x() - pol[i].x()
-            uy = pol[(i+1)%n].y() - pol[i].y()
+            # compute determinant to analyze position of the point 
+            # vertex i+1 - vertex i
+            ux, uy = Algorithms.computeVector(pol[(i+1)%n], pol[i])
 
-            vx = q.x() - pol[i].x()
-            vy = q.y() - pol[i].y()
+            # point q - vertex i
+            vx, vy = Algorithms.computeVector(q, pol[i])
             det = (ux*vy)-(vx*uy)
 
-            #counting vector u (point q - vertex i)
-            ux = pol[i].x() - q.x()
-            uy = pol[i].y() - q.y()
+            # compute vector u (point q - vertex i)
+            ux, uy = Algorithms.computeVector(pol[i], q)
 
-            #counting vecotr v (point q - vertex i+1)
-            vx = pol[(i+1)%n].x() - q.x()
-            vy = pol[(i+1)%n].y() - q.y()
+            # compute vecotr v (point q - vertex i+1)
+            vx, vy = Algorithms.computeVector(pol[(i+1)%n], q)
 
-            #counting angle of u and v
-            dot_product = ux*vx + uy*vy
-            mod_of_vector = abs(sqrt(ux**2 + uy**2)*sqrt(vx**2 + vy**2))
-            angle = dot_product/mod_of_vector
-            if angle > 1:
-                angle = 1
-            angle = abs(acos(angle))
-            #determinant determines the addition/subtraction of angle to the totalAngle
+            # compute angle of vectors u and v
+            angle = Algorithms.computeAngle(ux,uy,vx,vy)
+
+            # determinant determines the addition/subtraction of angle to the totalAngle
             if det > 0:
                 total_angle += angle
             elif det < 0:
                 total_angle -= angle
 
-            #edge detection trapping: point q on edge
+            #edge detection: point q on edge
             if det == 0 and abs(angle-pi) < EPS:
                 return -1
             
-        # the point q belongs to the polygon
+        # point q is inside the polygon
         if abs(abs(total_angle) - 2*pi) < EPS:
             return 1
+        # point q is outside of the polygon
         return 0
+    
+    def computeVector(p1,p2):
+        """ Returns vector between two points. """
+        x = p1.x() - p2.x()
+        y = p1.y() - p2.y()
+        return x,y
 
+    def computeAngle(ax,ay,bx,by):
+        """ Returns angle of two vecotrs. """
+        dot_product = ax*bx + ay*by
+        mod_of_vector = abs(sqrt(ax**2 + ay**2)*sqrt(bx**2 + by**2))
+        omega = dot_product/mod_of_vector
+        if omega > 1:
+            omega = 1
+        return abs(acos(omega))
+    
     # Set Ray Crossing as default algorithm upon starting the app
     default_alg = rayCrossingAlgorithm

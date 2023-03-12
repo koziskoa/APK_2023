@@ -106,7 +106,7 @@ class Ui_MainForm(object):
         self.actionAbout.triggered.connect(self.aboutClick)
         self.buttonRC.setToolTip("Determine the point location by using Ray Crossing Algorithm")
         self.buttonWN.setToolTip("Determine the point location by using Winding Number Algorithm")
-        self.actionOpen.triggered.connect(self.openFileClick)
+        self.actionOpen.triggered.connect(self.processFile)
         self.actionExit.triggered.connect(self.exitClick)
         self.actionClear.triggered.connect(self.clearClick)
 
@@ -147,7 +147,7 @@ class Ui_MainForm(object):
         if -1 in self.Canvas.polyg_status:
             self.onEdgePopup()
 
-    def openFileClick(self):
+    def processFile(self):
         """Handles opening and loading the data."""
         # Open file
         data = self.openFile()
@@ -167,7 +167,7 @@ class Ui_MainForm(object):
             return
 
     def openFile(self):
-        """Opens file."""
+        """Opens JSON/GEOJSON files."""
         filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input_files/.", filter="JSON file (*.json; *.geojson)")
         # Return if no file has been opened
         if filename == "":
