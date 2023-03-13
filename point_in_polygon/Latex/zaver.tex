@@ -1,0 +1,5 @@
+\chapter*{Závěr}
+
+\par V této úloze byly představeny a implementovány algoritmy \emph{Ray Crossing} a \emph{Winding Number}, které jsou schopny řešit \emph{Point-in-Polygon Problem} pro nekonvexní útvary. Jejich funkčnost byla testována pomocí vytvorěné aplikace, která umožňuje provést analýzu polohy bodu vůči zvolené polygonové mapě ve formátu \verb|JSON| nebo \verb|GeoJSON|. Tato aplikace byla vytvořena v programovacím jazyce \verb|Python 3.11|.
+\par Samotnou aplikaci je možné vylepšit o přidání podpory pro jiné formáty obsahující prostorovou informaci (napr. \verb|shapefile|). Současný stav aplikace navíc neumožňuje načíst \verb|JSON| a \verb|GeoJSON| soubory v jiném než nestardandním formátu – je nutno zabezpečit nalezení souřadnic v různě uspořádaných slovnících a seznamech v \verb|JSON|u a \verb|GeoJSON|u. Další možné vylepšení je implementace dynamické měnění velikosti načteného obsahu vzhledem k velikosti okna. Vhodným doplňkem může být i možnost přiblížení/oddálení obsahu okna pro zpřesnení umístění bodu.
+\par Vytvořená aplikace je volně dostupná přes \verb|GitHub| na adrese \url{https://github.com/koziskoa/APK_2023/tree/master/point_in_polygon}.
