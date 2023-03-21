@@ -55,6 +55,9 @@ class Draw(QWidget):
 
         #Draw ch
         qp.drawPolygon(self.__ch)
+
+        # draw enclosing rectangle
+        qp.drawPolygon(self.__er)
         #End draw
         qp.end()
 

@@ -1,14 +1,9 @@
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
-import json
-from math import cos, sin, sqrt, atan2, pi
-# p = qpoint - bod má konstruktor QPoint(X,Y)
-# p.x()
-# p.y()
-#dx = pol[i].x()
-class Algorithms:
+from math import *
 
+class Algorithms:
     def __init__(self):
         pass
 
@@ -27,9 +22,9 @@ class Algorithms:
             # z běžného seznamu tvoříme circular list - "kruhový seznam"
 
             #hledání vhodného segmentu - kt je prtnutý hor paprske, oba koncové body jsou v různých polorovinách
-            if(yi1r>0) and (yir<=0) or (yir > 0) and (yi1r <= 0):
+            if(yi1r > 0) and (yir <= 0) or (yir > 0) and (yi1r <= 0):
                 #computing intersection
-                xm = (xi1r*yir - xir*yi1r)/(yi1r-yir)
+                xm = (xi1r * yir - xir * yi1r) / (yi1r - yir)
 
                 #increment amount of intersections
                 if xm > 0:
@@ -37,37 +32,43 @@ class Algorithms:
         #point is inside
         if k % 2 == 1:
             return True
-        return
+        return False
     def get2LinesAngle(self,p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
         ux = p2.x()-p1.x()
         uy = p2.y()-p1.y()
+        print(p2, p1)
 
         vx = p4.x()-p3.x()
         vy = p4.y()-p3.y()
 
         #dot porduct
-        dp = ux*vx + uy*vx
+        dp = ux*vx + uy*vy
 
         #norms of vecotrs u and v
         nu = sqrt(ux**2 + uy**2)
         nv = sqrt(vx**2 + vy**2)
+        #print(nu, nv, vx, vy, ux, uy)
 
-        return cos(dp/(nu+nv))#tady dodělej update!
+        cos_angle = dp / (nu * nv)
+        cos_angle = max(min(cos_angle,1), -1)
+
+        return cos_angle
     
     def createChull(self, pol:QPolygonF):
         #create convex hull using Jarvis scan
-        chull = QPolygonF()
+        ch = QPolygonF()
 
         #find pivot - min y coords - function min(pol, key=lambda:k.y)
         q = min(pol, key = lambda k : k.y())
         
-        pj = QPointF(q.x()-1,q.y())
+        pj = QPointF(q.x() - 1, q.y())
         pj1 = q
+
         #add q to chull
-        chull.append(q)
+        ch.append(q)
 
         #Jarvis scan
-        while pj != q:
+        while True:
             #Initialize maximum
             phi_max = 0
             i_max = -1
@@ -85,38 +86,38 @@ class Algorithms:
                         i_max = i
 
                 # Append point to CH
-                chull.append(pol[i_max])
+                ch.append(pol[i_max])
 
                 #Actualize last two points
-                pj1 = pj
-                pj = pol[i_max]
+                pj = pj1
+                pj1 = pol[i_max]
 
                 #Stop condition
-                if pj == q:
+                if pj1 == q:
                     break
 
-        return chull
+        return ch
 
         
-    def rotate(self, pol: QPolygonF, sig: float)->QPolygonF:
+    def rotate(self, pol: QPolygonF, sig: float) -> QPolygonF:
         """Rotate polygon according to a given angle"""
         pol_rot = QPolygonF()
 
         #process all polygon vertices
         for i in range(len(pol)):
             # rotate point
-            xr = pol[i].x()*cos(sig)-pol[i].y()*sin(sig)
-            yr = pol[i].x()*sin(sig)+pol[i].y()*cos(sig)
+            x_rot = pol[i].x()*cos(sig)-pol[i].y()*sin(sig)
+            y_rot = pol[i].x()*sin(sig)+pol[i].y()*cos(sig)
 
             # create QPointF
-            q_point = QPointF(xr,yr)
+            q_point = QPointF(x_rot,y_rot)
             # add point to polygon
             pol_rot.append(q_point)
+
         return pol_rot
     
     def minMaxBox(self, pol:QPolygonF):
         """create min max box"""
-        minmax_box = QPolygonF()
         # find extreme coordinates
         #x_min = min(pol, key = lambda k:k.x())# tenhle zápis vrátí bod s min xovou souřadnicí
         x_min = min(pol, key = lambda k:k.x()).x()
@@ -152,8 +153,8 @@ class Algorithms:
         #process all segments of ch
         for i in range(len(ch)-1):
             # compute sigma
-            dx = ch[i+1].x()-ch[i].x()
-            dy = ch[i+1].y()-ch[i].y()
+            dx = ch[i+1].x() - ch[i].x()
+            dy = ch[i+1].y() - ch[i].y()
 
             sigma = atan2(dy,dx)
 
@@ -161,14 +162,16 @@ class Algorithms:
             ch_rot = self.rotate(ch, -sigma)
 
             #find mmb and area over rotated ch
-            mmb_r, area_r = self.minMaxBox(ch_rot)
-            if area_r < area_min:
-                area_min = area_r
-                mmb_min = mmb_r
+            mmb, area = self.minMaxBox(ch_rot)
+
+            if area < area_min:
+                area_min = area
+                mmb_min = mmb
                 sigma_min = sigma
 
         # Rotate minmax box
         er = self.rotate(mmb_min, sigma_min)
+
         # Resize rectangle
         er_reduced = self.resizeRectangle(er, pol)
 
@@ -180,12 +183,12 @@ class Algorithms:
         # process all vertices
         for i in range(n):
             # area increment
-            area += pol[i].x()*(pol[(i+1)%n].y()-pol[(i-1+n)%n].y())
+            area += pol[i].x() * (pol[(i+1) % n].y()-pol[(i-1+n) % n].y())
         
-        return 0.5*area
+        return 0.5 * abs(area)
         # resize rectangle - přednáška 2 slide 38 - plocha obecného mnohoúhelníku
         # když je bod 2x, tak příspěvěk té plochy bude nulový
-    def resizeRectangle(self, er: QPolygonF, area_building:QPolygonF):
+    def resizeRectangle(self, er: QPolygonF, pol:QPolygonF):
         # spočteme A z area(er) a Ab = area(pol)
         # poměr K
         # spočtemě těžiště
@@ -194,9 +197,12 @@ class Algorithms:
         # vi' = T + ui'
 
         # Initialize building area and enclosing rectangle area
-        Ab = abs(self.computeArea(area_building))
-        A = abs(self.computeArea(er))
-        k = Ab/A
+        ab = abs(self.computeArea(pol))
+        a = abs(self.computeArea(er))
+
+        k = ab/a
+
+        #n_er = len(er) #tohle nevim jestli je z hodiny
         # Center of enclosing rectangle
         x_t = (er[0].x() + er[1].x() + er[2].x() + er[3].x())/4
         y_t = (er[0].y() + er[1].y() + er[2].y() + er[3].y())/4
