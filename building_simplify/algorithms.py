@@ -33,10 +33,10 @@ class Algorithms:
         if k % 2 == 1:
             return True
         return False
+    
     def get2LinesAngle(self,p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
         ux = p2.x()-p1.x()
         uy = p2.y()-p1.y()
-        print(p2, p1)
 
         vx = p4.x()-p3.x()
         vy = p4.y()-p3.y()
@@ -47,12 +47,11 @@ class Algorithms:
         #norms of vecotrs u and v
         nu = sqrt(ux**2 + uy**2)
         nv = sqrt(vx**2 + vy**2)
-        #print(nu, nv, vx, vy, ux, uy)
 
         cos_angle = dp / (nu * nv)
         cos_angle = max(min(cos_angle,1), -1)
 
-        return cos_angle
+        return acos(cos_angle)
     
     def createChull(self, pol:QPolygonF):
         #create convex hull using Jarvis scan
@@ -61,8 +60,8 @@ class Algorithms:
         #find pivot - min y coords - function min(pol, key=lambda:k.y)
         q = min(pol, key = lambda k : k.y())
         
-        pj = QPointF(q.x() - 1, q.y())
-        pj1 = q
+        pj_1 = QPointF(q.x() - 1, q.y())
+        pj = q
 
         #add q to chull
         ch.append(q)
@@ -78,23 +77,23 @@ class Algorithms:
 
                 if pj != pol[i]:
                     #Measure angle
-                    phi = self.get2LinesAngle(pj, pj1, pj, pol[i])
+                    phi = self.get2LinesAngle(pj, pj_1, pj, pol[i])
 
                     #Actualize phi_max
                     if phi > phi_max:
                         phi_max = phi
                         i_max = i
 
-                # Append point to CH
-                ch.append(pol[i_max])
+            # Append point to CH
+            ch.append(pol[i_max])
 
-                #Actualize last two points
-                pj = pj1
-                pj1 = pol[i_max]
+            #Actualize last two points
+            pj_1 = pj
+            pj = pol[i_max]
 
-                #Stop condition
-                if pj1 == q:
-                    break
+            #Stop condition
+            if pj == q:
+                break
 
         return ch
 

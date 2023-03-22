@@ -53,9 +53,6 @@ class Draw(QWidget):
         qp.setPen(Qt.GlobalColor.red)
         #qp.setBrush(Qt.GlobalColor.yellow)
 
-        #Draw ch
-        qp.drawPolygon(self.__ch)
-
         # draw enclosing rectangle
         qp.drawPolygon(self.__er)
         #End draw

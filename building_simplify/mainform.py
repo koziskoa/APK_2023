@@ -98,12 +98,12 @@ class Ui_MainForm(object):
     def simplifyBuildingEnclosinRectangleClick(self):
         
         # get polygon
-        pol = self.Canvas.getPolygon()
+        pol = ui.Canvas.getPolygon()
         
         a = Algorithms()
         #convex hull
-        c_hull =  a.createChull(pol)
-        self.Canvas.setchull(c_hull)
+        c_er =  a.minAreaEnclosingRectangle(pol)
+        self.Canvas.setEnclosingRectangle(c_er)
         self.Canvas.repaint()
 
 
