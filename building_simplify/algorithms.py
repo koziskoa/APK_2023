@@ -286,6 +286,32 @@ class Algorithms:
         er_res = self.resizeRectangle(er, pol)
         #metoda hlavních komponent?: 
 
+    def euclidDistance(self, p1:QPointF, p2: QPointF):
+        a = p2.x() - p1.x()
+        b = p2.y() - p1.y()
+        dist = sqrt(a**2 + b**2)
+        return dist
+
+    def longestEdge(self, pol:QPolygonF):
+        '''NĚCO'''
+        n = len(pol)
+        longest_edge = -1
+        mmb_l, area_l = self.minMaxBox(pol)
+
+        for i in range(n):
+            actual_edge = self.euclidDistance(pol[i],pol[(i+1)%n])
+            if actual_edge > longest_edge:
+                longest_edge = actual_edge
+                p_i = pol[i]
+                p_i1 = pol[(i+1)%n]
+        
+        sigma_l = self.get2LinesAngle(p_i, p_i1, mmb_l[0], mmb_l[1])
+
+        mmb_lrot = self.rotate(mmb_l, sigma_l)
+        #res = self.resizeRectangle(mmb_lrot, pol)
+
+        return mmb_lrot
+
         """
         Metoda hlavních komponent
         matice A = [x1,y1...xn,y,]

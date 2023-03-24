@@ -102,7 +102,7 @@ class Ui_MainForm(object):
         
         a = Algorithms()
         #convex hull
-        c_er =  a.minAreaEnclosingRectangle(pol)
+        c_er =  a.minAreaEnclosingRectangle(pol) # longestEdge
         self.Canvas.setEnclosingRectangle(c_er)
         self.Canvas.repaint()
 
