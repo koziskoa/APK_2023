@@ -296,25 +296,57 @@ class Algorithms:
         '''NĚCO'''
         n = len(pol)
         longest_edge = -1
-        mmb_l, area_l = self.minMaxBox(pol)
+        #q = QPointF()
+        ch = self.createChull(pol)
 
         for i in range(n):
             actual_edge = self.euclidDistance(pol[i],pol[(i+1)%n])
             if actual_edge > longest_edge:
                 longest_edge = actual_edge
-                p_i = pol[i]
-                p_i1 = pol[(i+1)%n]
+                dx = pol[(i+1)%n].x() - pol[i].x()
+                dy = pol[(i+1)%n].y() - pol[i].y()
+
+        sigma_l = atan2(dy,dx)
+
+        building_rot = self.rotate(pol,-sigma_l)
+
+        mmb_l, area_l = self.minMaxBox(building_rot)
+        er = self.rotate(mmb_l, sigma_l)
         
-        sigma_l = self.get2LinesAngle(p_i, p_i1, mmb_l[0], mmb_l[1])
+        res = self.resizeRectangle(er, pol)
 
-        mmb_lrot = self.rotate(mmb_l, sigma_l)
-        #res = self.resizeRectangle(mmb_lrot, pol)
-
-        return mmb_lrot
+        return res
 
         """
         Metoda hlavních komponent
         matice A = [x1,y1...xn,y,]
         výsledekm budou vlastní čísla, vektory - v jakých směrech je budova určijící (v1 a v2 a jejich lambda1 a lambda2) - spačítám směrnici prvního hlavního vektrou - čtverec norem těch vlastních vektorů - importovat numpy
         metoda by měla být nejstabilnější známý maticový rozklad - zobecnění do 3D - výsledkem by pak byl kvádr
+
+def longestEdge(self, pol:QPolygonF):
+        '''NĚCO'''
+        n = len(pol)
+        longest_edge = -1
+        #q = QPointF()
+        #ch = self.createChull(pol)
+
+        for i in range(n):
+            actual_edge = self.euclidDistance(pol[i],pol[(i+1)%n])
+            if actual_edge > longest_edge:
+                longest_edge = actual_edge
+
+                dx = pol[(i+1)%n].x() - pol[i].x()
+                dy = pol[(i+1)%n].y() - pol[i].y()
+
+                sigma_l = atan2(dy,dx)
+                building_rot = self.rotate(pol,-sigma_l)
+
+        mmb_rot, area = self.minMaxBox(building_rot)
+        er = self.rotate(mmb_rot, sigma_l)
+
+        #mmb_lrot = self.rotate(mmb_l, sigma_l)
+        res = self.resizeRectangle(er, pol)
+
+        return res
+
         """
