@@ -68,3 +68,9 @@ class Draw(QWidget):
 
     def setEnclosingRectangle(self, pol: QPolygonF):
         self.__er = pol
+
+    def clearCanvas(self):
+        self.__pol = []
+        self.__ch = []
+        self.__er = []
+        

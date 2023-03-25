@@ -77,6 +77,7 @@ class Ui_MainForm(object):
 
         #connect signals and slots
         self.actionMinimum_Area_Enclosing_Rectangle.triggered.connect(self.simplifyBuildingEnclosinRectangleClick)
+        self.actionClear.triggered.connect(self.clearButtpn)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -104,6 +105,10 @@ class Ui_MainForm(object):
         #convex hull
         c_er =  a.minAreaEnclosingRectangle(pol) # longestEdge
         self.Canvas.setEnclosingRectangle(c_er)
+        self.Canvas.repaint()
+    
+    def clearButtpn(self):
+        self.Canvas.clearCanvas()
         self.Canvas.repaint()
 
 
