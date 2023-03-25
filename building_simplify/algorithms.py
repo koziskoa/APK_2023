@@ -97,6 +97,30 @@ class Algorithms:
 
         return ch
 
+    def sortAngles(self, pol: QPolygonF, pivot):
+        sorted_angles = []
+        n = len(pol)
+        for i in range(len(n)):
+            if  pivot != i:
+                dx = pol[(i+1)%n].x() - pol[i].x()
+                dy = pol[(i+1)%n].y() - pol[i].y()
+                sigma = atan2(dy,dx)
+
+        #sorted_points = sorted(points, key=polar_angle)
+
+    def grahamScan(self, pol:QPolygonF):
+        ch_g = QPolygonF()
+        
+        #find pivot - min y coords - function min(pol, key=lambda:k.y)
+        q = min(pol, key = lambda k : k.y())
+        pj = q
+
+        help_list = sorted(pol, key = self.sortAngles(pol, q))
+
+
+
+        #add q to chull
+        ch_g.append(q)
         
     def rotate(self, pol: QPolygonF, sig: float) -> QPolygonF:
         """Rotate polygon according to a given angle"""
