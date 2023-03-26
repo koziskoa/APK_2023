@@ -106,22 +106,52 @@ class Algorithms:
                 dy = pol[(i+1)%n].y() - pol[i].y()
                 sigma = atan2(dy,dx)
 
-        #sorted_points = sorted(points, key=polar_angle)
+    def getPolarAngle(self, p1:QPointF, p2:QPointF):
+        dx = p2.x() -p1.x()
+        dy = p2.y() - p1.y()
+        return atan2(dy, dx)
+
+    def vectorOrientation(self, p1:QPointF, p2:QPointF, p3:QPointF):
+        cross_prod = (p1.x() - p2.x()) * (p3.y() - p2.y()) - (p1.y() - p2.y()) * (p3.x() - p2.x())
+
+        if cross_prod > 0:
+            return 1 # ccw direction
+
+        elif cross_prod < 0:
+            return -1 # cw direction
+
+        else:
+            return 0 # collinear
+
+    def findPivot(self, pol:QPolygonF):
+        pivot = min(pol, key = lambda k : (k.y(), k.x()))
+        return pivot
+
+    def sortPoints(self, pol:QPolygonF, q:QPointF):
+        sorted_points = []
+        for point in pol:
+            sorted_points.append(point)
+        sorted_points.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
+        return sorted_points
 
     def grahamScan(self, pol:QPolygonF):
-        ch_g = QPolygonF()
-        
-        #find pivot - min y coords - function min(pol, key=lambda:k.y)
-        q = min(pol, key = lambda k : k.y())
-        pj = q
+        q = self.findPivot(pol)
+        #pol.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
+        sorted_points = self.sortPoints(pol, q)
+        ch_list = []
+        n = len(pol)
+        for i in range(n):
+            while len(ch_list) >= 2:
+                if self.vectorOrientation(ch_list[-2], ch_list[-1], pol[i]) == 1:
+                    break
 
-        help_list = sorted(pol, key = self.sortAngles(pol, q))
+                else:
+                    ch_list.pop()
 
+            ch_list.append(pol[i])
+        ch = QPolygonF(ch_list)
+        return ch
 
-
-        #add q to chull
-        ch_g.append(q)
-        
     def rotate(self, pol: QPolygonF, sig: float) -> QPolygonF:
         """Rotate polygon according to a given angle"""
         pol_rot = QPolygonF()
@@ -167,7 +197,7 @@ class Algorithms:
     def minAreaEnclosingRectangle(self, pol: QPolygonF):
         """Create minimum area enclosing rectangle"""
         # create convex hull
-        ch = self.createChull(pol)
+        ch = self.grahamScan(pol)
 
         # get minmax box, area and sigma
         mmb_min, area_min = self.minMaxBox(ch)
