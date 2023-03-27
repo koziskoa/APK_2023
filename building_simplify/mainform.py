@@ -103,7 +103,7 @@ class Ui_MainForm(object):
         
         a = Algorithms()
         #convex hull
-        c_er =  a.minAreaEnclosingRectangle(pol) #minAreaEnclosingRectangle
+        c_er =  a.grahamScan(pol) #minAreaEnclosingRectangle  wallAverage
         self.Canvas.setEnclosingRectangle(c_er)
         self.Canvas.repaint()
     

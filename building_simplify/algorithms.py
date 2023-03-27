@@ -142,13 +142,13 @@ class Algorithms:
         n = len(pol)
         for i in range(n):
             while len(ch_list) >= 2:
-                if self.vectorOrientation(ch_list[-2], ch_list[-1], pol[i]) == 1:
+                if self.vectorOrientation(ch_list[-2], ch_list[-1], sorted_points[i]) == 1:
                     break
 
                 else:
                     ch_list.pop()
 
-            ch_list.append(pol[i])
+            ch_list.append(sorted_points[i])
         ch = QPolygonF(ch_list)
         return ch
 
