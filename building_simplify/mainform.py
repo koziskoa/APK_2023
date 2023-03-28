@@ -5,7 +5,7 @@ from draw import Draw
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
-        MainForm.resize(1107, 600)
+        MainForm.resize(1000, 880)
         self.centralwidget = QtWidgets.QWidget(parent=MainForm)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -26,6 +26,8 @@ class Ui_MainForm(object):
         self.menuFile.setObjectName("menuFile")
         self.menuSimplify = QtWidgets.QMenu(parent=self.menubar)
         self.menuSimplify.setObjectName("menuSimplify")
+        self.menuHelp = QtWidgets.QMenu(parent=self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
         MainForm.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainForm)
         self.statusbar.setObjectName("statusbar")
@@ -38,11 +40,11 @@ class Ui_MainForm(object):
         icon.addPixmap(QtGui.QPixmap("icons/open_file.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionOpen.setIcon(icon)
         self.actionOpen.setObjectName("actionOpen")
-        self.actionClose = QtGui.QAction(parent=MainForm)
+        self.actionExit = QtGui.QAction(parent=MainForm)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("icons/exit.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionClose.setIcon(icon1)
-        self.actionClose.setObjectName("actionClose")
+        self.actionExit.setIcon(icon1)
+        self.actionExit.setObjectName("actionExit")
         self.actionMinimum_Area_Enclosing_Rectangle = QtGui.QAction(parent=MainForm)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("icons/maer.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
@@ -54,19 +56,26 @@ class Ui_MainForm(object):
         self.actionWall_Average.setIcon(icon3)
         self.actionWall_Average.setObjectName("actionWall_Average")
         self.actionClear = QtGui.QAction(parent=MainForm)
+        self.actionAbout = QtGui.QAction(parent=MainForm)
+        self.actionAbout.setObjectName("actionAbout")
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("icons/clear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionClear.setIcon(icon4)
         self.actionClear.setObjectName("actionClear")
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("icons/about.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionAbout.setIcon(icon5)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionClose)
+        self.menuFile.addAction(self.actionExit)
         self.menuSimplify.addAction(self.actionMinimum_Area_Enclosing_Rectangle)
         self.menuSimplify.addAction(self.actionWall_Average)
         self.menuSimplify.addSeparator()
         self.menuSimplify.addAction(self.actionClear)
+        self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSimplify.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMinimum_Area_Enclosing_Rectangle)
@@ -77,23 +86,27 @@ class Ui_MainForm(object):
         #connect signals and slots
         self.actionMinimum_Area_Enclosing_Rectangle.triggered.connect(self.simplifyBuildingEnclosinRectangleClick)
         self.actionClear.triggered.connect(self.clearButtpn)
+        self.actionExit.triggered.connect(self.exitClick)
+        self.actionAbout.triggered.connect(self.aboutClick)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
-        MainForm.setWindowTitle(_translate("MainForm", "BuildingSimplify"))
+        MainForm.setWindowTitle(_translate("MainForm", "Building Simplifier"))
         self.menuFile.setTitle(_translate("MainForm", "File"))
         self.menuSimplify.setTitle(_translate("MainForm", "Simplify"))
+        self.menuHelp.setTitle(_translate("MainForm", "Help"))
         self.toolBar.setWindowTitle(_translate("MainForm", "toolBar"))
-        self.actionOpen.setText(_translate("MainForm", "Open"))
+        self.actionOpen.setText(_translate("MainForm", "Open..."))
         self.actionOpen.setToolTip(_translate("MainForm", "Open file"))
-        self.actionClose.setText(_translate("MainForm", "Close"))
-        self.actionClose.setToolTip(_translate("MainForm", "Close file"))
+        self.actionExit.setText(_translate("MainForm", "Exit"))
+        self.actionExit.setToolTip(_translate("MainForm", "Exit application"))
         self.actionMinimum_Area_Enclosing_Rectangle.setText(_translate("MainForm", "Minimum Area Enclosing Rectangle"))
         self.actionWall_Average.setText(_translate("MainForm", "Wall Average"))
         self.actionClear.setText(_translate("MainForm", "Clear"))
+        self.actionAbout.setText(_translate("MainForm", "About..."))
 
     def simplifyBuildingEnclosinRectangleClick(self):
         
@@ -111,6 +124,14 @@ class Ui_MainForm(object):
     def clearButtpn(self):
         self.Canvas.clearCanvas()
         self.Canvas.repaint()
+
+    def exitClick(self):
+        sys.exit()
+
+    def aboutClick(self):
+        """Opens GitHub repository link."""
+        url = QUrl("https://github.com/koziskoa/APK_2023/tree/master/building_simplify")
+        QDesktopServices.openUrl(url)
 
 
 if __name__ == "__main__":
