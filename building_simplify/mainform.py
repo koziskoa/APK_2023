@@ -64,6 +64,11 @@ class Ui_MainForm(object):
         self.actionClear = QtGui.QAction(parent=MainForm)
         self.actionAbout = QtGui.QAction(parent=MainForm)
         self.actionAbout.setObjectName("actionAbout")
+        self.actionWeightedBisector = QtGui.QAction(parent=MainForm)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap("icons/weightedbisector.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionWeightedBisector.setIcon(icon8)
+        self.actionWeightedBisector.setObjectName("actionWeightedBisector")
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("icons/clear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionClear.setIcon(icon4)
@@ -79,6 +84,7 @@ class Ui_MainForm(object):
         self.menuSimplify.addAction(self.actionMAER)
         self.menuSimplify.addAction(self.actionWallAverage)
         self.menuSimplify.addAction(self.actionLongestEdge)
+        self.menuSimplify.addAction(self.actionWeightedBisector)
         self.menuSimplify.addSeparator()
         self.menuSimplify.addAction(self.actionClear)
         self.menuHelp.addAction(self.actionAbout)
@@ -91,6 +97,7 @@ class Ui_MainForm(object):
         self.toolBar.addAction(self.actionMAER)
         self.toolBar.addAction(self.actionWallAverage)
         self.toolBar.addAction(self.actionLongestEdge)
+        self.toolBar.addAction(self.actionWeightedBisector)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear)
         self.toolBar.addSeparator()
@@ -116,6 +123,7 @@ class Ui_MainForm(object):
         self.actionMAER.triggered.connect(self.simplifyMAERClick)
         self.actionWallAverage.triggered.connect(self.simplifyWallAverageClick)
         self.actionLongestEdge.triggered.connect(self.simplifyLongestEdgeClick)
+        self.actionWeightedBisector.triggered.connect(self.simplifyWeightedBisectorClick)
         self.actionClear.triggered.connect(self.clearButtpn)
         self.actionExit.triggered.connect(self.exitClick)
         self.actionAbout.triggered.connect(self.aboutClick)
@@ -184,6 +192,9 @@ class Ui_MainForm(object):
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
+
+    def simplifyWeightedBisectorClick(self):
+        pass
     
     def clearButtpn(self):
         self.Canvas.clearCanvas()
