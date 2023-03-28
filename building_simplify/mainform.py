@@ -2,7 +2,6 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from algorithms import *
 from draw import Draw
 
-
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
@@ -103,13 +102,9 @@ class Ui_MainForm(object):
         
         a = Algorithms()
         #convex hull
-<<<<<<< HEAD
         ch = a.grahamScan(pol)
-        self.Canvas.setchull(ch)
+        self.Canvas.setConvexHull(ch)
         c_er =  a.minAreaEnclosingRectangle(pol) #minAreaEnclosingRectangle
-=======
-        c_er =  a.grahamScan(pol) #minAreaEnclosingRectangle  wallAverage
->>>>>>> dcb692e7d97d39cf8fc42e5317eda6cf5a345b9b
         self.Canvas.setEnclosingRectangle(c_er)
         self.Canvas.repaint()
     

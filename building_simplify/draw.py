@@ -62,7 +62,7 @@ class Draw(QWidget):
         #Get polygon
         return self.__pol
     
-    def setchull(self, pol):
+    def setConvexHull(self, pol):
         #set chull
         self.__ch = pol
 

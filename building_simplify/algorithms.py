@@ -53,7 +53,7 @@ class Algorithms:
 
         return acos(cos_angle)
     
-    def createChull(self, pol:QPolygonF):
+    def jarvisScan(self, pol:QPolygonF):
         #create convex hull using Jarvis scan
         ch = QPolygonF()
 
@@ -131,24 +131,27 @@ class Algorithms:
         sorted_points = []
         for point in pol:
             sorted_points.append(point)
-        sorted_points.sort(key = lambda k: (-self.getPolarAngle(q, k), self.euclidDistance(q, k)))
+        sorted_points.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
         return sorted_points
 
     def grahamScan(self, pol:QPolygonF):
         q = self.findPivot(pol)
         #pol.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
+        ch = QPolygonF()
         sorted_points = self.sortPoints(pol, q)
         ch_list = []
         n = len(pol)
         for i in range(n):
             while len(ch_list) >= 2:
-                if self.vectorOrientation(ch_list[-2], ch_list[-1], sorted_points[i]) == 1:
+                # Check for CW direction instead of CCW as the y axis is flipped
+                if self.vectorOrientation(ch_list[-2], ch_list[-1], sorted_points[i]) == -1:
                     break
 
                 else:
                     ch_list.pop()
 
             ch_list.append(sorted_points[i])
+
         ch = QPolygonF(ch_list)
         return ch
 
@@ -197,7 +200,7 @@ class Algorithms:
     def minAreaEnclosingRectangle(self, pol: QPolygonF):
         """Create minimum area enclosing rectangle"""
         # create convex hull
-        ch = self.grahamScan(pol)
+        ch = self.jarvisScan(pol)
 
         # get minmax box, area and sigma
         mmb_min, area_min = self.minMaxBox(ch)
@@ -341,17 +344,14 @@ class Algorithms:
         #metoda hlavních komponent?: 
 
     def euclidDistance(self, p1:QPointF, p2: QPointF):
-        a = p2.x() - p1.x()
-        b = p2.y() - p1.y()
-        dist = sqrt(a**2 + b**2)
-        return dist
+        return sqrt((p2.x() - p1.x())**2 + (p2.y() - p1.y())**2)
 
     def longestEdge(self, pol:QPolygonF):
         '''NĚCO'''
         n = len(pol)
         longest_edge = -1
         #q = QPointF()
-        ch = self.createChull(pol)
+        ch = self.jarvisScan(pol)
 
         for i in range(n):
             actual_edge = self.euclidDistance(pol[i],pol[(i+1)%n])
