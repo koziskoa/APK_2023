@@ -7,7 +7,7 @@ class Algorithms:
     def __init__(self):
         pass
 
-    def getPointPolygonPositionR(self, q, pol):
+    """def getPointPolygonPositionR(self, q, pol):
         k = 0 #počet průsečíků
         n = len(pol) # délka polygonu
 
@@ -32,7 +32,7 @@ class Algorithms:
         #point is inside
         if k % 2 == 1:
             return True
-        return False
+        return False"""
     
     def get2LinesAngle(p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
         ux = p2.x()-p1.x()
@@ -135,6 +135,9 @@ class Algorithms:
         return sorted_points
 
     def grahamScan(pol:QPolygonF):
+        '''
+        - odůvodnění ve zprávě proč jsme použily překlikávátka na konvexní obálky
+        '''
         q = Algorithms.findPivot(pol)
         #pol.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
         ch = QPolygonF()
