@@ -1,6 +1,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from algorithms import *
 from draw import Draw
+import json
 
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
@@ -45,16 +46,21 @@ class Ui_MainForm(object):
         icon1.addPixmap(QtGui.QPixmap("icons/exit.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionExit.setIcon(icon1)
         self.actionExit.setObjectName("actionExit")
-        self.actionMinimum_Area_Enclosing_Rectangle = QtGui.QAction(parent=MainForm)
+        self.actionMAER = QtGui.QAction(parent=MainForm)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("icons/maer.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionMinimum_Area_Enclosing_Rectangle.setIcon(icon2)
-        self.actionMinimum_Area_Enclosing_Rectangle.setObjectName("actionMinimum_Area_Enclosing_Rectangle")
-        self.actionWall_Average = QtGui.QAction(parent=MainForm)
+        self.actionMAER.setIcon(icon2)
+        self.actionMAER.setObjectName("actionMAER")
+        self.actionWallAverage = QtGui.QAction(parent=MainForm)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap("icons/wa.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionWall_Average.setIcon(icon3)
-        self.actionWall_Average.setObjectName("actionWall_Average")
+        self.actionWallAverage.setIcon(icon3)
+        self.actionWallAverage.setObjectName("actionWallAverage")
+        self.actionLongestEdge = QtGui.QAction(parent=MainForm)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap("icons/longestedge.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionLongestEdge.setIcon(icon7)
+        self.actionLongestEdge.setObjectName("actionLongestEdge")
         self.actionClear = QtGui.QAction(parent=MainForm)
         self.actionAbout = QtGui.QAction(parent=MainForm)
         self.actionAbout.setObjectName("actionAbout")
@@ -70,8 +76,9 @@ class Ui_MainForm(object):
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
-        self.menuSimplify.addAction(self.actionMinimum_Area_Enclosing_Rectangle)
-        self.menuSimplify.addAction(self.actionWall_Average)
+        self.menuSimplify.addAction(self.actionMAER)
+        self.menuSimplify.addAction(self.actionWallAverage)
+        self.menuSimplify.addAction(self.actionLongestEdge)
         self.menuSimplify.addSeparator()
         self.menuSimplify.addAction(self.actionClear)
         self.menuHelp.addAction(self.actionAbout)
@@ -81,8 +88,9 @@ class Ui_MainForm(object):
         self.toolBar.setStyleSheet("QToolBar{spacing:4px;}")
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionMinimum_Area_Enclosing_Rectangle)
-        self.toolBar.addAction(self.actionWall_Average)
+        self.toolBar.addAction(self.actionMAER)
+        self.toolBar.addAction(self.actionWallAverage)
+        self.toolBar.addAction(self.actionLongestEdge)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear)
         self.toolBar.addSeparator()
@@ -93,7 +101,7 @@ class Ui_MainForm(object):
         self.buttonJarvis.setToolTip("Construct convex hull using Jarvis Scan algorithm")
         self.buttonGraham = QtWidgets.QRadioButton(text="Graham Scan", checkable=True)
         self.buttonGraham.setToolTip("Construct convex hull using Graham Scan algorithm")
-        self.buttonCH = QtWidgets.QPushButton(text="Construct Convex Hull")
+        self.buttonCH = QtWidgets.QPushButton(text="Show Convex Hull")
         self.buttonCH.setIcon(icon6)
         self.buttonJarvis.clicked.connect(self.switchToJarvis)
         self.buttonGraham.clicked.connect(self.switchToGraham)
@@ -104,7 +112,10 @@ class Ui_MainForm(object):
             self.group.addButton(button)
 
         #connect signals and slots
-        self.actionMinimum_Area_Enclosing_Rectangle.triggered.connect(self.simplifyBuildingEnclosinRectangleClick)
+        self.actionOpen.triggered.connect(self.processFile)
+        self.actionMAER.triggered.connect(self.simplifyMAERClick)
+        self.actionWallAverage.triggered.connect(self.simplifyWallAverageClick)
+        self.actionLongestEdge.triggered.connect(self.simplifyLongestEdgeClick)
         self.actionClear.triggered.connect(self.clearButtpn)
         self.actionExit.triggered.connect(self.exitClick)
         self.actionAbout.triggered.connect(self.aboutClick)
@@ -123,8 +134,9 @@ class Ui_MainForm(object):
         self.actionOpen.setToolTip(_translate("MainForm", "Open file"))
         self.actionExit.setText(_translate("MainForm", "Exit"))
         self.actionExit.setToolTip(_translate("MainForm", "Exit application"))
-        self.actionMinimum_Area_Enclosing_Rectangle.setText(_translate("MainForm", "Minimum Area Enclosing Rectangle"))
-        self.actionWall_Average.setText(_translate("MainForm", "Wall Average"))
+        self.actionMAER.setText(_translate("MainForm", "Minimum Area Enclosing Rectangle"))
+        self.actionWallAverage.setText(_translate("MainForm", "Wall Average"))
+        self.actionLongestEdge.setText(_translate("MainForm", "Longest Edge"))
         self.actionClear.setText(_translate("MainForm", "Clear"))
         self.actionAbout.setText(_translate("MainForm", "About..."))
 
@@ -135,21 +147,42 @@ class Ui_MainForm(object):
         Algorithms.ch_alg = Algorithms.grahamScan
 
     def constructCH(self):
-        pol = self.Canvas.getPolygon()
-        ch = Algorithms.ch_alg(pol)
-        self.Canvas.setConvexHull(ch)
+        pol_list = self.Canvas.getPolygonList()
+        ch_list = []
+        for pol in pol_list:
+            ch = Algorithms.ch_alg(pol)
+            ch_list.append(ch)
+        self.Canvas.setConvexHulls(ch_list)
         self.Canvas.repaint()
 
-    def simplifyBuildingEnclosinRectangleClick(self):
-        # get polygon
-        pol = self.Canvas.getPolygon()
-        
-        a = Algorithms()
-        #convex hull
-        #ch = a.ch_alg(pol)
-        #self.Canvas.setConvexHull(ch)
-        c_er =  a.minAreaEnclosingRectangle(pol) #minAreaEnclosingRectangle
-        self.Canvas.setEnclosingRectangle(c_er)
+    def simplifyMAERClick(self):
+        pol_list = self.Canvas.getPolygonList()
+        er_list = []
+        for pol in pol_list:
+        #pol = self.Canvas.getPolygon()
+            enclosing_rect = Algorithms.minAreaEnclosingRectangle(pol)
+            er_list.append(enclosing_rect)
+        self.Canvas.setEnclosingRectangles(er_list)
+        self.Canvas.repaint()
+
+    def simplifyWallAverageClick(self):
+        pol_list = self.Canvas.getPolygonList()
+        er_list = []
+        for pol in pol_list:
+            # pol = self.Canvas.getPolygon()
+            enclosing_rect = Algorithms.wallAverage(pol)
+            er_list.append(enclosing_rect)
+        self.Canvas.setEnclosingRectangles(er_list)
+        self.Canvas.repaint()
+
+    def simplifyLongestEdgeClick(self):
+        pol_list = self.Canvas.getPolygonList()
+        er_list = []
+        for pol in pol_list:
+            # pol = self.Canvas.getPolygon()
+            enclosing_rect = Algorithms.longestEdge(pol)
+            er_list.append(enclosing_rect)
+        self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
     
     def clearButtpn(self):
@@ -163,6 +196,36 @@ class Ui_MainForm(object):
         """Opens GitHub repository link."""
         url = QUrl("https://github.com/koziskoa/APK_2023/tree/master/building_simplify")
         QDesktopServices.openUrl(url)
+
+    def processFile(self):
+        """Handles opening and loading the data."""
+        # Open file
+        data = self.openFile()
+        # Return if no file has been opened
+        if data == None:
+            return
+        # Clear canvas for new polygon layer
+        self.Canvas.clearCanvas()
+        # Try to load and process the data
+        correct_data = self.Canvas.loadData(data)
+        # Alert the user if JSON has incorrect formatting
+        if correct_data == False:
+            dlg = QtWidgets.QMessageBox()
+            dlg.setWindowTitle("Error Message")
+            dlg.setText("Invalid JSON file")
+            dlg.exec()
+            return
+
+    def openFile(self):
+        """Opens JSON/GEOJSON files."""
+        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input_files/.", filter="JSON file (*.json; *.geojson)")
+        # Return if no file has been opened
+        if filename == "":
+            return None
+        # Return data from JSON
+        with open(filename, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return(data)
 
 
 if __name__ == "__main__":

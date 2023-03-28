@@ -155,7 +155,7 @@ class Algorithms:
         ch = QPolygonF(ch_list)
         return ch
 
-    def rotate(self, pol: QPolygonF, sig: float) -> QPolygonF:
+    def rotate(pol: QPolygonF, sig: float) -> QPolygonF:
         """Rotate polygon according to a given angle"""
         pol_rot = QPolygonF()
 
@@ -172,7 +172,7 @@ class Algorithms:
 
         return pol_rot
     
-    def minMaxBox(self, pol:QPolygonF):
+    def minMaxBox(pol:QPolygonF):
         """create min max box"""
         # find extreme coordinates
         #x_min = min(pol, key = lambda k:k.x())# tenhle zápis vrátí bod s min xovou souřadnicí
@@ -197,13 +197,13 @@ class Algorithms:
 
         return minmax_box, area
     
-    def minAreaEnclosingRectangle(self, pol: QPolygonF):
+    def minAreaEnclosingRectangle(pol: QPolygonF):
         """Create minimum area enclosing rectangle"""
         # create convex hull
         ch = Algorithms.ch_alg(pol)
 
         # get minmax box, area and sigma
-        mmb_min, area_min = self.minMaxBox(ch)
+        mmb_min, area_min = Algorithms.minMaxBox(ch)
         sigma_min = 0
 
         #process all segments of ch
@@ -215,10 +215,10 @@ class Algorithms:
             sigma = atan2(dy,dx)
 
             # rotate
-            ch_rot = self.rotate(ch, -sigma)
+            ch_rot = Algorithms.rotate(ch, -sigma)
 
             #find mmb and area over rotated ch
-            mmb, area = self.minMaxBox(ch_rot)
+            mmb, area = Algorithms.minMaxBox(ch_rot)
 
             if area < area_min:
                 area_min = area
@@ -226,10 +226,10 @@ class Algorithms:
                 sigma_min = sigma
 
         # Rotate minmax box
-        er = self.rotate(mmb_min, sigma_min)
+        er = Algorithms.rotate(mmb_min, sigma_min)
 
         # Resize rectangle
-        er_reduced = self.resizeRectangle(er, pol)
+        er_reduced = Algorithms.resizeRectangle(er, pol)
 
         return er_reduced
         
@@ -244,7 +244,7 @@ class Algorithms:
         return 0.5 * abs(area)
         # resize rectangle - přednáška 2 slide 38 - plocha obecného mnohoúhelníku
         # když je bod 2x, tak příspěvěk té plochy bude nulový
-    def resizeRectangle(self, er: QPolygonF, pol:QPolygonF):
+    def resizeRectangle(er: QPolygonF, pol:QPolygonF):
         # spočteme A z area(er) a Ab = area(pol)
         # poměr K
         # spočtemě těžiště
@@ -291,7 +291,7 @@ class Algorithms:
         return er_reduced
 
         #
-    def wallAverage(self, pol: QPolygonF):
+    def wallAverage(pol: QPolygonF):
         # compute sigma
         dx = pol[1].x() - pol[0].x()
         dy = pol[1].y() - pol[0].y()
@@ -331,16 +331,17 @@ class Algorithms:
         # vzali jsme 1. stranu: modulo pi/2,2. strana: modulo pi/2,... - dohromady jsme z toho spočetli průměrný zbytek
         # otočíme o sigma aver
         # rotate
-        pol_rot = self.rotate(pol, -sigma_aver)
+        pol_rot = Algorithms.rotate(pol, -sigma_aver)
 
         #find mmb and area over rotated pol
-        mmb, area = self.minMaxBox(pol_rot)
+        mmb, area = Algorithms.minMaxBox(pol_rot)
         
         #rotate (back) min-max box
-        er = self.rotate(mmb, sigma_aver)
+        er = Algorithms.rotate(mmb, sigma_aver)
 
         #resize building
-        er_res = self.resizeRectangle(er, pol)
+        er_res = Algorithms.resizeRectangle(er, pol)
+        return er_res
         #metoda hlavních komponent?: 
 
     def euclidDistance(p1:QPointF, p2: QPointF):
