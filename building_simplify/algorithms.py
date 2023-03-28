@@ -34,7 +34,7 @@ class Algorithms:
             return True
         return False
     
-    def get2LinesAngle(self,p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
+    def get2LinesAngle(p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
         ux = p2.x()-p1.x()
         uy = p2.y()-p1.y()
 
@@ -53,7 +53,7 @@ class Algorithms:
 
         return acos(cos_angle)
     
-    def jarvisScan(self, pol:QPolygonF):
+    def jarvisScan(pol:QPolygonF):
         #create convex hull using Jarvis scan
         ch = QPolygonF()
 
@@ -77,7 +77,7 @@ class Algorithms:
 
                 if pj != pol[i]:
                     #Measure angle
-                    phi = self.get2LinesAngle(pj, pj_1, pj, pol[i])
+                    phi = Algorithms.get2LinesAngle(pj, pj_1, pj, pol[i])
 
                     #Actualize phi_max
                     if phi > phi_max:
@@ -106,12 +106,12 @@ class Algorithms:
                 dy = pol[(i+1)%n].y() - pol[i].y()
                 sigma = atan2(dy,dx)
 
-    def getPolarAngle(self, p1:QPointF, p2:QPointF):
+    def getPolarAngle(p1:QPointF, p2:QPointF):
         dx = p2.x() -p1.x()
         dy = p2.y() - p1.y()
         return atan2(dy, dx)
 
-    def vectorOrientation(self, p1:QPointF, p2:QPointF, p3:QPointF):
+    def vectorOrientation(p1:QPointF, p2:QPointF, p3:QPointF):
         cross_prod = (p1.x() - p2.x()) * (p3.y() - p2.y()) - (p1.y() - p2.y()) * (p3.x() - p2.x())
 
         if cross_prod > 0:
@@ -123,28 +123,28 @@ class Algorithms:
         else:
             return 0 # collinear
 
-    def findPivot(self, pol:QPolygonF):
+    def findPivot(pol:QPolygonF):
         pivot = min(pol, key = lambda k : (k.y(), k.x()))
         return pivot
 
-    def sortPoints(self, pol:QPolygonF, q:QPointF):
+    def sortPoints(pol:QPolygonF, q:QPointF):
         sorted_points = []
         for point in pol:
             sorted_points.append(point)
-        sorted_points.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
+        sorted_points.sort(key = lambda k: (Algorithms.getPolarAngle(q, k), Algorithms.euclidDistance(q, k)))
         return sorted_points
 
-    def grahamScan(self, pol:QPolygonF):
-        q = self.findPivot(pol)
+    def grahamScan(pol:QPolygonF):
+        q = Algorithms.findPivot(pol)
         #pol.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
         ch = QPolygonF()
-        sorted_points = self.sortPoints(pol, q)
+        sorted_points = Algorithms.sortPoints(pol, q)
         ch_list = []
         n = len(pol)
         for i in range(n):
             while len(ch_list) >= 2:
                 # Check for CW direction instead of CCW as the y axis is flipped
-                if self.vectorOrientation(ch_list[-2], ch_list[-1], sorted_points[i]) == -1:
+                if Algorithms.vectorOrientation(ch_list[-2], ch_list[-1], sorted_points[i]) == -1:
                     break
 
                 else:
@@ -200,7 +200,7 @@ class Algorithms:
     def minAreaEnclosingRectangle(self, pol: QPolygonF):
         """Create minimum area enclosing rectangle"""
         # create convex hull
-        ch = self.jarvisScan(pol)
+        ch = Algorithms.ch_alg(pol)
 
         # get minmax box, area and sigma
         mmb_min, area_min = self.minMaxBox(ch)
@@ -233,7 +233,7 @@ class Algorithms:
 
         return er_reduced
         
-    def computeArea(self, pol: QPolygonF):
+    def computeArea(pol: QPolygonF):
         n = len(pol)
         area = 0
         # process all vertices
@@ -253,8 +253,8 @@ class Algorithms:
         # vi' = T + ui'
 
         # Initialize building area and enclosing rectangle area
-        ab = abs(self.computeArea(pol))
-        a = abs(self.computeArea(er))
+        ab = abs(Algorithms.computeArea(pol))
+        a = abs(Algorithms.computeArea(er))
 
         k = ab/a
 
@@ -343,18 +343,18 @@ class Algorithms:
         er_res = self.resizeRectangle(er, pol)
         #metoda hlavních komponent?: 
 
-    def euclidDistance(self, p1:QPointF, p2: QPointF):
+    def euclidDistance(p1:QPointF, p2: QPointF):
         return sqrt((p2.x() - p1.x())**2 + (p2.y() - p1.y())**2)
 
-    def longestEdge(self, pol:QPolygonF):
+    def longestEdge(pol:QPolygonF):
         '''NĚCO'''
         n = len(pol)
         longest_edge = -1
         #q = QPointF()
-        ch = self.jarvisScan(pol)
+        ch = Algorithms.ch_alg(pol)
 
         for i in range(n):
-            actual_edge = self.euclidDistance(pol[i],pol[(i+1)%n])
+            actual_edge = Algorithms.euclidDistance(pol[i],pol[(i+1)%n])
             if actual_edge > longest_edge:
                 longest_edge = actual_edge
                 dx = pol[(i+1)%n].x() - pol[i].x()
@@ -362,12 +362,12 @@ class Algorithms:
 
         sigma_l = atan2(dy,dx)
 
-        building_rot = self.rotate(pol,-sigma_l)
+        building_rot = Algorithms.rotate(pol,-sigma_l)
 
-        mmb_l, area_l = self.minMaxBox(building_rot)
-        er = self.rotate(mmb_l, sigma_l)
+        mmb_l, area_l = Algorithms.minMaxBox(building_rot)
+        er = Algorithms.rotate(mmb_l, sigma_l)
         
-        res = self.resizeRectangle(er, pol)
+        res = Algorithms.resizeRectangle(er, pol)
 
         return res
 
@@ -404,3 +404,4 @@ def longestEdge(self, pol:QPolygonF):
         return res
 
         """
+    ch_alg = jarvisScan

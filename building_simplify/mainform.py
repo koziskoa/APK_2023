@@ -65,6 +65,8 @@ class Ui_MainForm(object):
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap("icons/about.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionAbout.setIcon(icon5)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("icons/ch.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
@@ -76,12 +78,30 @@ class Ui_MainForm(object):
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSimplify.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        self.toolBar.setStyleSheet("QToolBar{spacing:4px;}")
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMinimum_Area_Enclosing_Rectangle)
         self.toolBar.addAction(self.actionWall_Average)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear)
+        self.toolBar.addSeparator()
+
+        # Toolbar settings
+        self.buttonJarvis = QtWidgets.QRadioButton(text="Jarvis Scan", checkable=True)
+        self.buttonJarvis.setChecked(True)
+        self.buttonJarvis.setToolTip("Construct convex hull using Jarvis Scan algorithm")
+        self.buttonGraham = QtWidgets.QRadioButton(text="Graham Scan", checkable=True)
+        self.buttonGraham.setToolTip("Construct convex hull using Graham Scan algorithm")
+        self.buttonCH = QtWidgets.QPushButton(text="Construct Convex Hull")
+        self.buttonCH.setIcon(icon6)
+        self.buttonJarvis.clicked.connect(self.switchToJarvis)
+        self.buttonGraham.clicked.connect(self.switchToGraham)
+        self.buttonCH.clicked.connect(self.constructCH)
+        self.group = QtWidgets.QButtonGroup(exclusive=True)
+        for button in (self.buttonCH, self.buttonJarvis, self.buttonGraham):
+            self.toolBar.addWidget(button)
+            self.group.addButton(button)
 
         #connect signals and slots
         self.actionMinimum_Area_Enclosing_Rectangle.triggered.connect(self.simplifyBuildingEnclosinRectangleClick)
@@ -108,15 +128,26 @@ class Ui_MainForm(object):
         self.actionClear.setText(_translate("MainForm", "Clear"))
         self.actionAbout.setText(_translate("MainForm", "About..."))
 
+    def switchToJarvis(self):
+        Algorithms.ch_alg = Algorithms.jarvisScan
+
+    def switchToGraham(self):
+        Algorithms.ch_alg = Algorithms.grahamScan
+
+    def constructCH(self):
+        pol = self.Canvas.getPolygon()
+        ch = Algorithms.ch_alg(pol)
+        self.Canvas.setConvexHull(ch)
+        self.Canvas.repaint()
+
     def simplifyBuildingEnclosinRectangleClick(self):
-        
         # get polygon
-        pol = ui.Canvas.getPolygon()
+        pol = self.Canvas.getPolygon()
         
         a = Algorithms()
         #convex hull
-        ch = a.grahamScan(pol)
-        self.Canvas.setConvexHull(ch)
+        #ch = a.ch_alg(pol)
+        #self.Canvas.setConvexHull(ch)
         c_er =  a.minAreaEnclosingRectangle(pol) #minAreaEnclosingRectangle
         self.Canvas.setEnclosingRectangle(c_er)
         self.Canvas.repaint()
