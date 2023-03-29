@@ -375,6 +375,17 @@ class Algorithms:
 
         return res
 
+    def weightedBisector(pol:QPolygonF):    
+        diagonals = []
+
+        for i in range(len(pol)):
+            for j in range(len(pol)):
+                if pol[i] != pol[j]:
+                    if pol[(i+1)/len(pol)] or pol[(i-1)/len(pol)]: # řekněme, že jsem se touhle podmínkou zbavila p+1 a p-1
+                        continue # doufám, že to je jdi na další index
+                    diagonals.append([pol[i], pol[j]])
+
+
         """
         Metoda hlavních komponent
         matice A = [x1,y1...xn,y,]

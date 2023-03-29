@@ -188,7 +188,7 @@ class Ui_MainForm(object):
         er_list = []
         for pol in pol_list:
             # pol = self.Canvas.getPolygon()
-            enclosing_rect = Algorithms.longestEdge(pol)
+            enclosing_rect = Algorithms.weightedBisector(pol) # longestEdge
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
