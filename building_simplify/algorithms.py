@@ -4,10 +4,32 @@ from PyQt6.QtWidgets import *
 from math import *
 
 class Algorithms:
+    ''''
+    A class to store algorithms for polygon generalization and creating convex hull and other accompanying functions
+
+    Methods for creating convex hull: / Convex hull methods:
+    ----------
+    jarvisScan(pol:QPolygonF):
+
+    grahamScan(pol:QPolygonF):
+
+    
+    Methods for polygon generalization:
+    ---------------
+    minAreaEnclosingRectangle(pol: QPolygonF):
+
+    wallAverage(pol:QPolygonF):
+
+    weightedBisector(pol:QPolygonF):
+
+    '''
     def __init__(self):
         pass
 
     def get2LinesAngle(p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
+        ''' Computes angle of two lines '''
+
+        # computing vectors u and v 
         ux = p2.x()-p1.x()
         uy = p2.y()-p1.y()
 
@@ -27,6 +49,7 @@ class Algorithms:
         return acos(cos_angle)
     
     def jarvisScan(pol:QPolygonF):
+        '''Creates convex hull by using Jarvis scan algorithms'''
         #create convex hull using Jarvis scan
         ch = QPolygonF()
 
@@ -71,7 +94,7 @@ class Algorithms:
         return ch
 
     def grahamScan(pol:QPolygonF):
-        '''
+        ''' Creates convewx hull by using Graham scan algorithms
         - odůvodnění ve zprávě proč jsme použily překlikávátka na konvexní obálky
         '''
         q = Algorithms.findPivot(pol)
@@ -94,21 +117,20 @@ class Algorithms:
         ch = QPolygonF(ch_list)
         return ch
 
-    def sortAngles(self, pol: QPolygonF, pivot):
-        sorted_angles = []
-        n = len(pol)
-        for i in range(len(n)):
-            if  pivot != i:
-                dx = pol[(i+1)%n].x() - pol[i].x()
-                dy = pol[(i+1)%n].y() - pol[i].y()
-                sigma = atan2(dy,dx)
-
     def getPolarAngle(p1:QPointF, p2:QPointF):
+        '''Computes angle between the line and the x-axis'''
         dx = p2.x() -p1.x()
         dy = p2.y() - p1.y()
         return atan2(dy, dx)
 
     def vectorOrientation(p1:QPointF, p2:QPointF, p3:QPointF):
+        '''
+        Returns information about orientation?????
+
+            1:  ccw orientation
+           -1:  cw orientation
+            0:  colinear
+        '''
         cross_prod = (p1.x() - p2.x()) * (p3.y() - p2.y()) - (p1.y() - p2.y()) * (p3.x() - p2.x())
 
         if cross_prod > 0:
@@ -121,10 +143,18 @@ class Algorithms:
             return 0 # collinear
 
     def findPivot(pol:QPolygonF):
+        '''
+        Finds  point with the minimum ypsilon coordinae
+            - If there are multiple points with the min y-coord - tehn it returns the point with the minimum x-coord
+        '''
         pivot = min(pol, key = lambda k : (k.y(), k.x()))
         return pivot
 
     def sortPoints(pol:QPolygonF, q:QPointF):
+        '''
+        Sorts dataset of points according to angle between the pivot and point
+            - If there are multiple points with the same angle - then it sorts  according to its distance
+        '''
         sorted_points = []
         for point in pol:
             sorted_points.append(point)
@@ -212,6 +242,7 @@ class Algorithms:
         return er_reduced
         
     def computeArea(pol: QPolygonF):
+        ''' Computes area of a given polygon'''
         n = len(pol)
         area = 0
         # process all vertices
@@ -224,6 +255,7 @@ class Algorithms:
         # když je bod 2x, tak příspěvěk té plochy bude nulový
 
     def resizeRectangle(er: QPolygonF, pol:QPolygonF):
+        ''' Reasizes the polygon according to given polygon'''
         # spočteme A z area(er) a Ab = area(pol)
         # poměr K
         # spočtemě těžiště
@@ -271,6 +303,7 @@ class Algorithms:
 
         #
     def wallAverage(pol: QPolygonF):
+        '''Returns generalized polygon by using Wall average algorithm'''
         # compute sigma
         dx = pol[1].x() - pol[0].x()
         dy = pol[1].y() - pol[0].y()
@@ -324,10 +357,11 @@ class Algorithms:
         #metoda hlavních komponent?: 
 
     def euclidDistance(p1:QPointF, p2: QPointF):
+        '''Computes euclidian distance'''
         return sqrt((p2.x() - p1.x())**2 + (p2.y() - p1.y())**2)
 
     def longestEdge(pol:QPolygonF):
-        '''NĚCO'''
+        '''Returns generalized polygon by using the Longest edge algorithms'''
         n = len(pol)
         longest_edge = -1
         #q = QPointF()
@@ -352,6 +386,7 @@ class Algorithms:
         return res
 
     def findDiagonals(ch:QPolygonF):
+        '''Returns list of the possible diagonals in polygon'''
         diagonals = []
         n = len(ch)-1
         for i in range(n):
@@ -361,6 +396,11 @@ class Algorithms:
         return diagonals
 
     def intersectionTest(p1:QPointF, p2:QPointF, pol:QPolygonF):
+        '''
+        Returns the information about the intersection of two given lilnes
+            True: the intersection exits
+            False: the intersection does not exits
+        '''
         n = len(pol)
         for i in range(n):
 
@@ -382,6 +422,7 @@ class Algorithms:
         return False
 
     def setDiagonals(diagonals, pol):
+        '''Finds the first two longeset diagonals in polygon'''
         # dve premenne na Null
         # vyplnia sa
         sigma1 = None
@@ -424,6 +465,7 @@ class Algorithms:
         return sigma1, dist1, sigma2, dist2
 
     def weightedBisector(pol:QPolygonF):
+        '''Returns generalized polygon by using Weighted Bisector algorithms'''
         ch = Algorithms.ch_alg(pol)
         if len(ch) <= 4:
             return ch
