@@ -69,6 +69,16 @@ class Ui_MainForm(object):
         icon8.addPixmap(QtGui.QPixmap("icons/weightedbisector.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionWeightedBisector.setIcon(icon8)
         self.actionWeightedBisector.setObjectName("actionWeightedBisector")
+        self.actionClearEnclosingRects = QtGui.QAction(parent=MainForm)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap("icons/clear_er.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionClearEnclosingRects.setIcon(icon9)
+        self.actionClearEnclosingRects.setObjectName("actionClearEnclosingRects")
+        self.actionClearConvexHulls = QtGui.QAction(parent=MainForm)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap("icons/clear_ch.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionClearConvexHulls.setIcon(icon10)
+        self.actionClearConvexHulls.setObjectName("actionClearConvexHulls")
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("icons/clear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionClear.setIcon(icon4)
@@ -86,6 +96,8 @@ class Ui_MainForm(object):
         self.menuSimplify.addAction(self.actionLongestEdge)
         self.menuSimplify.addAction(self.actionWeightedBisector)
         self.menuSimplify.addSeparator()
+        self.menuSimplify.addAction(self.actionClearEnclosingRects)
+        self.menuSimplify.addAction(self.actionClearConvexHulls)
         self.menuSimplify.addAction(self.actionClear)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -99,6 +111,8 @@ class Ui_MainForm(object):
         self.toolBar.addAction(self.actionLongestEdge)
         self.toolBar.addAction(self.actionWeightedBisector)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionClearEnclosingRects)
+        self.toolBar.addAction(self.actionClearConvexHulls)
         self.toolBar.addAction(self.actionClear)
         self.toolBar.addSeparator()
 
@@ -124,6 +138,8 @@ class Ui_MainForm(object):
         self.actionWallAverage.triggered.connect(self.simplifyWallAverageClick)
         self.actionLongestEdge.triggered.connect(self.simplifyLongestEdgeClick)
         self.actionWeightedBisector.triggered.connect(self.simplifyWeightedBisectorClick)
+        self.actionClearEnclosingRects.triggered.connect(self.clearERButton)
+        self.actionClearConvexHulls.triggered.connect(self.clearCHButton)
         self.actionClear.triggered.connect(self.clearButton)
         self.actionExit.triggered.connect(self.exitClick)
         self.actionAbout.triggered.connect(self.aboutClick)
@@ -146,16 +162,21 @@ class Ui_MainForm(object):
         self.actionWallAverage.setText(_translate("MainForm", "Wall Average"))
         self.actionLongestEdge.setText(_translate("MainForm", "Longest Edge"))
         self.actionWeightedBisector.setText(_translate("MainForm", "Weighted Bisector"))
-        self.actionClear.setText(_translate("MainForm", "Clear"))
+        self.actionClear.setText(_translate("MainForm", "Clear All"))
+        self.actionClearConvexHulls.setText(_translate("MainForm", "Clear Convex Hulls"))
+        self.actionClearEnclosingRects.setText(_translate("MainForm", "Clear Enclosing Rectangles"))
         self.actionAbout.setText(_translate("MainForm", "About..."))
 
     def switchToJarvis(self):
+        """Switches to Jarvis Scan algorithm to construct convex hulls."""
         Algorithms.ch_alg = Algorithms.jarvisScan
 
     def switchToGraham(self):
+        """Switches to Graham Scan algorithm to construct convex hulls."""
         Algorithms.ch_alg = Algorithms.grahamScan
 
     def constructCH(self):
+        """Constructs convex hulls using selected algorithm."""
         pol_list = self.Canvas.getPolygonList()
         ch_list = []
         for pol in pol_list:
@@ -165,6 +186,7 @@ class Ui_MainForm(object):
         self.Canvas.repaint()
 
     def simplifyMAERClick(self):
+        """Simplifies input polygons using Minimum Area Enclosing Rectangle algorithm."""
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
@@ -174,6 +196,7 @@ class Ui_MainForm(object):
         self.Canvas.repaint()
 
     def simplifyWallAverageClick(self):
+        """Simplifies input polygons using Wall Average algorithm."""
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
@@ -183,28 +206,42 @@ class Ui_MainForm(object):
         self.Canvas.repaint()
 
     def simplifyLongestEdgeClick(self):
+        """Simplifies input polygons using Longest Edge algorithm."""
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
-            enclosing_rect = Algorithms.longestEdge(pol) # longestEdge
+            enclosing_rect = Algorithms.longestEdge(pol)
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
 
     def simplifyWeightedBisectorClick(self):
+        """Simplifies input polygons using Weighted Bisector algorithm."""
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
-            enclosing_rect = Algorithms.weightedBisector(pol)  # longestEdge
+            enclosing_rect = Algorithms.weightedBisector(pol)
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
     
     def clearButton(self):
+        """Clears canvas."""
         self.Canvas.clearCanvas()
         self.Canvas.repaint()
 
+    def clearERButton(self):
+        """Clears enclosing rectangles."""
+        self.Canvas.clearERs()
+        self.Canvas.repaint()
+
+    def clearCHButton(self):
+        """Clears convex hulls."""
+        self.Canvas.clearCHs()
+        self.Canvas.repaint()
+
     def exitClick(self):
+        """Closes the application."""
         sys.exit()
 
     def aboutClick(self):

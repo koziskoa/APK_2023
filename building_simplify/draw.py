@@ -52,6 +52,12 @@ class Draw(QWidget):
         self.__er_list = []
         self.__ch_list = []
 
+    def clearERs(self):
+        self.__er_list = []
+
+    def clearCHs(self):
+        self.__ch_list = []
+
     def getPolygonList(self):
         """Returns list of input polygons."""
         return  self.__polyg_list
