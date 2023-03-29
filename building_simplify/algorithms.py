@@ -7,33 +7,6 @@ class Algorithms:
     def __init__(self):
         pass
 
-    """def getPointPolygonPositionR(self, q, pol):
-        k = 0 #počet průsečíků
-        n = len(pol) # délka polygonu
-
-        #process all vertices
-        for i in range (n):
-            #reduce coordinates
-            xir = pol[i].x() - q.x()
-            yir = pol[i].y() - q.y()
-
-            xi1r = pol[(i+1)%n].x() - q.x()
-            yi1r = pol[(i+1)%n].y() - q.y()
-            # z běžného seznamu tvoříme circular list - "kruhový seznam"
-
-            #hledání vhodného segmentu - kt je prtnutý hor paprske, oba koncové body jsou v různých polorovinách
-            if(yi1r > 0) and (yir <= 0) or (yir > 0) and (yi1r <= 0):
-                #computing intersection
-                xm = (xi1r * yir - xir * yi1r) / (yi1r - yir)
-
-                #increment amount of intersections
-                if xm > 0:
-                    k+=1
-        #point is inside
-        if k % 2 == 1:
-            return True
-        return False"""
-    
     def get2LinesAngle(p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
         ux = p2.x()-p1.x()
         uy = p2.y()-p1.y()
@@ -97,6 +70,30 @@ class Algorithms:
 
         return ch
 
+    def grahamScan(pol:QPolygonF):
+        '''
+        - odůvodnění ve zprávě proč jsme použily překlikávátka na konvexní obálky
+        '''
+        q = Algorithms.findPivot(pol)
+        #pol.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
+        ch = QPolygonF()
+        sorted_points = Algorithms.sortPoints(pol, q)
+        ch_list = []
+        n = len(pol)
+        for i in range(n):
+            while len(ch_list) >= 2:
+                # Check for CW direction instead of CCW as the y axis is flipped
+                if Algorithms.vectorOrientation(ch_list[-2], ch_list[-1], sorted_points[i]) == -1:
+                    break
+
+                else:
+                    ch_list.pop()
+
+            ch_list.append(sorted_points[i])
+
+        ch = QPolygonF(ch_list)
+        return ch
+
     def sortAngles(self, pol: QPolygonF, pivot):
         sorted_angles = []
         n = len(pol)
@@ -134,29 +131,7 @@ class Algorithms:
         sorted_points.sort(key = lambda k: (Algorithms.getPolarAngle(q, k), Algorithms.euclidDistance(q, k)))
         return sorted_points
 
-    def grahamScan(pol:QPolygonF):
-        '''
-        - odůvodnění ve zprávě proč jsme použily překlikávátka na konvexní obálky
-        '''
-        q = Algorithms.findPivot(pol)
-        #pol.sort(key = lambda k: (self.getPolarAngle(q, k), self.euclidDistance(q, k)))
-        ch = QPolygonF()
-        sorted_points = Algorithms.sortPoints(pol, q)
-        ch_list = []
-        n = len(pol)
-        for i in range(n):
-            while len(ch_list) >= 2:
-                # Check for CW direction instead of CCW as the y axis is flipped
-                if Algorithms.vectorOrientation(ch_list[-2], ch_list[-1], sorted_points[i]) == -1:
-                    break
 
-                else:
-                    ch_list.pop()
-
-            ch_list.append(sorted_points[i])
-
-        ch = QPolygonF(ch_list)
-        return ch
 
     def rotate(pol: QPolygonF, sig: float) -> QPolygonF:
         """Rotate polygon according to a given angle"""
@@ -247,6 +222,7 @@ class Algorithms:
         return 0.5 * abs(area)
         # resize rectangle - přednáška 2 slide 38 - plocha obecného mnohoúhelníku
         # když je bod 2x, tak příspěvěk té plochy bude nulový
+
     def resizeRectangle(er: QPolygonF, pol:QPolygonF):
         # spočteme A z area(er) a Ab = area(pol)
         # poměr K

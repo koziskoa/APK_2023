@@ -124,7 +124,7 @@ class Ui_MainForm(object):
         self.actionWallAverage.triggered.connect(self.simplifyWallAverageClick)
         self.actionLongestEdge.triggered.connect(self.simplifyLongestEdgeClick)
         self.actionWeightedBisector.triggered.connect(self.simplifyWeightedBisectorClick)
-        self.actionClear.triggered.connect(self.clearButtpn)
+        self.actionClear.triggered.connect(self.clearButton)
         self.actionExit.triggered.connect(self.exitClick)
         self.actionAbout.triggered.connect(self.aboutClick)
 
@@ -145,6 +145,7 @@ class Ui_MainForm(object):
         self.actionMAER.setText(_translate("MainForm", "Minimum Area Enclosing Rectangle"))
         self.actionWallAverage.setText(_translate("MainForm", "Wall Average"))
         self.actionLongestEdge.setText(_translate("MainForm", "Longest Edge"))
+        self.actionWeightedBisector.setText(_translate("MainForm", "Weighted Bisector"))
         self.actionClear.setText(_translate("MainForm", "Clear"))
         self.actionAbout.setText(_translate("MainForm", "About..."))
 
@@ -167,7 +168,6 @@ class Ui_MainForm(object):
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
-        #pol = self.Canvas.getPolygon()
             enclosing_rect = Algorithms.minAreaEnclosingRectangle(pol)
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
@@ -177,7 +177,6 @@ class Ui_MainForm(object):
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
-            # pol = self.Canvas.getPolygon()
             enclosing_rect = Algorithms.wallAverage(pol)
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
@@ -187,7 +186,6 @@ class Ui_MainForm(object):
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
-            # pol = self.Canvas.getPolygon()
             enclosing_rect = Algorithms.longestEdge(pol) # longestEdge
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
@@ -197,13 +195,12 @@ class Ui_MainForm(object):
         pol_list = self.Canvas.getPolygonList()
         er_list = []
         for pol in pol_list:
-            # pol = self.Canvas.getPolygon()
             enclosing_rect = Algorithms.weightedBisector(pol)  # longestEdge
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
     
-    def clearButtpn(self):
+    def clearButton(self):
         self.Canvas.clearCanvas()
         self.Canvas.repaint()
 

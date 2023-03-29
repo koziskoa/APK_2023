@@ -7,28 +7,9 @@ class Draw(QWidget):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        #Building, convex hull and enclosing rectangle
-        self.__pol = QPolygonF()
-        self.__ch = QPolygonF()
-        self.__er = QPolygonF()
         self.__polyg_list = []
         self.__er_list = []
         self.__ch_list = []
-
-    def mousePressEvent(self, e:QMouseEvent):
-        #Left mouse button click
-        x = e.position().x()
-        y = e.position().y()
-
-        #Add point to polygon
-        p = QPointF(x,y)
-
-        #Append p to polygon
-        self.__pol.append(p)
-
-        #Repaint screen
-        self.repaint()
 
     def paintEvent(self, e:QPaintEvent):
         #Draw polygon
@@ -44,7 +25,6 @@ class Draw(QWidget):
         qp.setBrush(Qt.GlobalColor.white)
 
         #Draw building
-        qp.drawPolygon(self.__pol)
         for i in range(len(self.__polyg_list)):
             qp.drawPolygon(self.__polyg_list[i])
 
@@ -53,7 +33,6 @@ class Draw(QWidget):
         #qp.setBrush(Qt.GlobalColor.yellow)
 
         #Draw ch
-        qp.drawPolygon(self.__ch)
         for i in range(len(self.__ch_list)):
             qp.drawPolygon(self.__ch_list[i])
         #End draw
@@ -63,29 +42,15 @@ class Draw(QWidget):
         #qp.setBrush(Qt.GlobalColor.yellow)
 
         # draw enclosing rectangle
-        qp.drawPolygon(self.__er)
         for i in range(len(self.__er_list)):
             qp.drawPolygon(self.__er_list[i])
         #End draw
         qp.end()
 
-    def getPolygon(self):
-        #Get polygon
-        return self.__pol
-    
-    def setConvexHull(self, pol):
-        #set chull
-        self.__ch = pol
-
-    def setEnclosingRectangle(self, pol: QPolygonF):
-        self.__er = pol
-
     def clearCanvas(self):
-        self.__pol = QPolygonF()
-        self.__ch = QPolygonF()
-        self.__er = QPolygonF()
         self.__polyg_list = []
         self.__er_list = []
+        self.__ch_list = []
 
     def getPolygonList(self):
         """Returns list of input polygons."""
