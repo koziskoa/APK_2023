@@ -4,58 +4,113 @@ from PyQt6.QtWidgets import *
 from math import *
 
 class Draw(QWidget):
+    """
+    A class to process and draw polygons on canvas.
+
+    ---
+
+    Attributes
+    ----------
+    __polyg_list (list):
+        List of input polygons
+    __er_list (list):
+        List of created enclosing rectangles
+    __ch_list (list):
+        List of created convex hulls
+
+    Methods
+    -------
+    paintEvent(e:QPaintEvent):
+        Handles drawing of objects on canvas
+
+    clearCanvas():
+        Clears canvas.
+
+    clearERs():
+        Clears enclosing rectangles.
+
+    clearCHs():
+        Clears convex hulls.
+
+    getPolygonList():
+        Returns list of input polygons.
+
+    getEnclosingRectangles():
+        Returns list of enclosing rectangles.
+
+    getConvexHulls():
+        Returns list of convex hulls.
+
+    setEnclosingRectangles():
+        Sets enclosing rectangles.
+
+    setConvexHulls():
+        Sets convex hulls.
+
+    resizePolygons(xmin, ymin, xmax, ymax):
+        Resizes input data to fit to display.
+
+    findBoundingPoints(p:QPointF, xmin, ymin, xmax, ymax):
+        Finds minimum and maximum coordinates of bounding box around input polygons.
+
+    loadData(data):
+        Loads input JSON file.
+    """
 
     def __init__(self, *args, **kwargs):
+        """
+        Constructs all the necessary attributes for Draw object.
+
+            Parameters:
+                __polyg_list (list): List of input polygons.
+                __er_list (list): List of created enclosing rectangles.
+                __ch_list (list): List of created convex hulls.
+        """
         super().__init__(*args, **kwargs)
         self.__polyg_list = []
         self.__er_list = []
         self.__ch_list = []
 
     def paintEvent(self, e:QPaintEvent):
-        #Draw polygon
-
-        #Create graphic object
+        """Handles drawing of objects on canvas."""
         qp = QPainter(self)
-
-        #Start draw
+        # Start drawing
         qp.begin(self)
 
-        #Set attributes
+        #Set attributes of buildings
         qp.setPen(Qt.GlobalColor.black)
         qp.setBrush(Qt.GlobalColor.white)
-
-        #Draw building
+        # Draw buildings
         for i in range(len(self.__polyg_list)):
             qp.drawPolygon(self.__polyg_list[i])
 
-        #Set attributes convex hull
+        # Set attributes of convex hulls
         qp.setPen(Qt.GlobalColor.blue)
-        #qp.setBrush(Qt.GlobalColor.yellow)
-
-        #Draw ch
+        #Draw convex hulls
         for i in range(len(self.__ch_list)):
             qp.drawPolygon(self.__ch_list[i])
-        #End draw
 
-        #Set attributes enclosing rectangle
+        # Set attributes of enclosing rectangles
         qp.setPen(Qt.GlobalColor.red)
-        #qp.setBrush(Qt.GlobalColor.yellow)
-
-        # draw enclosing rectangle
+        # Draw enclosing rectangles
         for i in range(len(self.__er_list)):
             qp.drawPolygon(self.__er_list[i])
-        #End draw
+
+        # Stop drawing
         qp.end()
 
     def clearCanvas(self):
+        """Clears canvas."""
         self.__polyg_list = []
         self.__er_list = []
         self.__ch_list = []
 
     def clearERs(self):
+        """Clears enclosing rectangles."""
         self.__er_list = []
 
     def clearCHs(self):
+        """Clears convex hulls."""
         self.__ch_list = []
 
     def getPolygonList(self):
@@ -63,11 +118,15 @@ class Draw(QWidget):
         return  self.__polyg_list
 
     def getConvexHulls(self, pols):
+        """Returns list of convex hulls."""
         self.__ch_list = pols
+
     def setEnclosingRectangles(self, pols: list):
+        """Sets enclosing rectangles."""
         self.__er_list = pols
 
     def setConvexHulls(self, pols: list):
+        """Sets convex hulls."""
         self.__ch_list = pols
 
     def resizePolygons(self, xmin, ymin, xmax, ymax):
