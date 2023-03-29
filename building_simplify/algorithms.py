@@ -375,15 +375,87 @@ class Algorithms:
 
         return res
 
-    def weightedBisector(pol:QPolygonF):    
+    def findDiagonals(ch:QPolygonF):
         diagonals = []
+        n = len(ch)
+        for i in range(n):
+            for j in range(i+1, n-i):
+                if (j != (i-1+n)%n) and (j != (i+1)%n):
+                    diagonals.append([ch[i], ch[j], Algorithms.euclidDistance(ch[i], ch[j])])
+        return diagonals
 
-        for i in range(len(pol)):
+    def intersectionTest(p1:QPointF, p2:QPointF, pol:QPolygonF):
+        n = len(pol)
+        for i in range(n):
+
+            point = pol[i]
+            point_after = pol[(i+1)%n]
+
+            if (p1 == point or p1 == point_after) or (p2 == point or p2 == point_after):
+                continue
+
+            t1 = ((p2.x()-p1.x())*(point_after.y()-p1.y())-((point_after.x()-p1.x())*(p2.y()-p1.y())))
+            t2 = ((p2.x()-p1.x())*(point.y()-p1.y())-((point.x()-p1.x())*(p2.y()-p1.y())))
+            t3 = ((point_after.x()-point.x())*(p1.y()-point.y())-((p1.x()-point.x())*(point_after.y()-point.y())))
+            t4 = ((point_after.x()-point.x())*(p2.y()-point.y())-((p2.x()-point.x())*(point_after.y()-point.y())))
+
+            if ((t1 and t2) > 0 or (t1 and t2) < 0)  or ((t3 and t4) > 0 or (t3 and t4) < 0) :
+                continue
+            else:
+                return True
+        return False
+
+
+    def weightedBisector(pol:QPolygonF):
+        ch = Algorithms.ch_alg(pol)
+        start = 0
+        diagonals = Algorithms.findDiagonals(ch)
+        diagonals.sort(key=lambda k: k[2], reverse=True)
+        for i in range(2):
+            for j in range(start, len(diagonals)):
+                p1, p2 = diagonals[j][0], diagonals[j][1]
+                res = Algorithms.intersectionTest(p1, p2, pol)
+                if res == True:
+                    continue
+
+                else:
+                    if i == 0:
+                        dx = diagonals[j][0].x() - diagonals[j][1].x()
+                        dy = diagonals[j][0].y() - diagonals[j][1].y()
+                        sigma1 = atan2(dy, dx)
+                        dist1 = diagonals[j][2]
+                        start +=1
+
+                    else:
+                        dx = diagonals[j][0].x() - diagonals[j][1].x()
+                        dy = diagonals[j][0].y() - diagonals[j][1].y()
+                        sigma2 = atan2(dy, dx)
+                        dist2 = diagonals[j][2]
+
+                    break
+
+        sigma = (dist1*sigma1 + dist2*sigma2)/(dist1+dist2)
+        building_rot = Algorithms.rotate(pol, -sigma)
+
+        mmb, area = Algorithms.minMaxBox(building_rot)
+        er = Algorithms.rotate(mmb, sigma)
+
+        res = Algorithms.resizeRectangle(er, pol)
+
+        return res
+
+        # metoda TEST
+        # weightedBisector
+
+        """
+                for i in range(len(pol)):
             for j in range(len(pol)):
                 if pol[i] != pol[j]:
                     if pol[(i+1)/len(pol)] or pol[(i-1)/len(pol)]: # řekněme, že jsem se touhle podmínkou zbavila p+1 a p-1
                         continue # doufám, že to je jdi na další index
                     diagonals.append([pol[i], pol[j]])
+        """
+
 
 
         """

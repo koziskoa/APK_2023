@@ -188,13 +188,20 @@ class Ui_MainForm(object):
         er_list = []
         for pol in pol_list:
             # pol = self.Canvas.getPolygon()
-            enclosing_rect = Algorithms.weightedBisector(pol) # longestEdge
+            enclosing_rect = Algorithms.longestEdge(pol) # longestEdge
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
 
     def simplifyWeightedBisectorClick(self):
-        pass
+        pol_list = self.Canvas.getPolygonList()
+        er_list = []
+        for pol in pol_list:
+            # pol = self.Canvas.getPolygon()
+            enclosing_rect = Algorithms.weightedBisector(pol)  # longestEdge
+            er_list.append(enclosing_rect)
+        self.Canvas.setEnclosingRectangles(er_list)
+        self.Canvas.repaint()
     
     def clearButtpn(self):
         self.Canvas.clearCanvas()
