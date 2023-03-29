@@ -377,9 +377,9 @@ class Algorithms:
 
     def findDiagonals(ch:QPolygonF):
         diagonals = []
-        n = len(ch)
+        n = len(ch)-1
         for i in range(n):
-            for j in range(i+1, n-i):
+            for j in range(i+1, n):
                 if (j != (i-1+n)%n) and (j != (i+1)%n):
                     diagonals.append([ch[i], ch[j], Algorithms.euclidDistance(ch[i], ch[j])])
         return diagonals
@@ -399,40 +399,62 @@ class Algorithms:
             t3 = ((point_after.x()-point.x())*(p1.y()-point.y())-((p1.x()-point.x())*(point_after.y()-point.y())))
             t4 = ((point_after.x()-point.x())*(p2.y()-point.y())-((p2.x()-point.x())*(point_after.y()-point.y())))
 
-            if ((t1 and t2) > 0 or (t1 and t2) < 0)  or ((t3 and t4) > 0 or (t3 and t4) < 0) :
+            if t1*t2 >= 0 or t3*t4 >=0:
                 continue
             else:
                 return True
         return False
 
+    def setDiagonals(diagonals, pol):
+        # dve premenne na Null
+        # vyplnia sa
+        sigma1 = None
+        dist1 = None
+        sigma2 = None
+        dist2 = None
+
+        for i in range(len(diagonals)):
+            p1, p2 = diagonals[i][0], diagonals[i][1]
+            res = Algorithms.intersectionTest(p1, p2, pol)
+            if res == True:
+                continue
+
+            else:
+                if dist1 is None:
+                    dx = diagonals[i][0].x() - diagonals[i][1].x()
+                    dy = diagonals[i][0].y() - diagonals[i][1].y()
+                    sigma1 = atan2(dy, dx)
+                    dist1 = diagonals[i][2]
+
+                else:
+                    dx = diagonals[i][0].x() - diagonals[i][1].x()
+                    dy = diagonals[i][0].y() - diagonals[i][1].y()
+                    sigma2 = atan2(dy, dx)
+                    dist2 = diagonals[i][2]
+                    break
+
+        if sigma1 is None:
+            dx = diagonals[0][0].x() - diagonals[0][1].x()
+            dy = diagonals[0][0].y() - diagonals[0][1].y()
+            sigma1 = atan2(dy, dx)
+            dist1 = diagonals[0][2]
+
+        if sigma2 is None:
+            dx = diagonals[1][0].x() - diagonals[1][1].x()
+            dy = diagonals[1][0].y() - diagonals[1][1].y()
+            sigma2 = atan2(dy, dx)
+            dist2 = diagonals[1][2]
+
+        return sigma1, dist1, sigma2, dist2
 
     def weightedBisector(pol:QPolygonF):
         ch = Algorithms.ch_alg(pol)
+        if len(ch) <= 4:
+            return ch
         start = 0
         diagonals = Algorithms.findDiagonals(ch)
         diagonals.sort(key=lambda k: k[2], reverse=True)
-        for i in range(2):
-            for j in range(start, len(diagonals)):
-                p1, p2 = diagonals[j][0], diagonals[j][1]
-                res = Algorithms.intersectionTest(p1, p2, pol)
-                if res == True:
-                    continue
-
-                else:
-                    if i == 0:
-                        dx = diagonals[j][0].x() - diagonals[j][1].x()
-                        dy = diagonals[j][0].y() - diagonals[j][1].y()
-                        sigma1 = atan2(dy, dx)
-                        dist1 = diagonals[j][2]
-                        start +=1
-
-                    else:
-                        dx = diagonals[j][0].x() - diagonals[j][1].x()
-                        dy = diagonals[j][0].y() - diagonals[j][1].y()
-                        sigma2 = atan2(dy, dx)
-                        dist2 = diagonals[j][2]
-
-                    break
+        sigma1, dist1, sigma2, dist2 = Algorithms.setDiagonals(diagonals, pol)
 
         sigma = (dist1*sigma1 + dist2*sigma2)/(dist1+dist2)
         building_rot = Algorithms.rotate(pol, -sigma)
