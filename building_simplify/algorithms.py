@@ -77,7 +77,7 @@ class Algorithms:
         """Creates convex hull by using Jarvis scan algorithm."""
         # Check for any lines or points
         if Algorithms.checkValidity(pol) == False:
-            return pol
+            return False
 
         # Initialize convex hull
         ch = QPolygonF()
@@ -127,7 +127,7 @@ class Algorithms:
         """Creates convex hull by using Graham scan algorithm."""
         # Check for any lines or points
         if Algorithms.checkValidity(pol) == False:
-            return pol
+            return False
 
         # Find pivot
         q = Algorithms.findPivot(pol)
@@ -159,8 +159,10 @@ class Algorithms:
 
     def minAreaEnclosingRectangle(pol: QPolygonF):
         """Creates minimum area enclosing rectangle."""
-        # Create convex hull
+        # Create convex hull is possible
         ch = Algorithms.ch_alg(pol)
+        if ch == False:
+            return False
         # Get minmax box, its area and initialize minimum angle sigma
         mmb_min, area_min = Algorithms.minMaxBox(ch)
         sigma_min = 0
@@ -192,7 +194,7 @@ class Algorithms:
         """Returns generalized polygon by using Wall average algorithm."""
         # Check for lines/points as no convex hull is created
         if Algorithms.checkValidity(pol) == False:
-            return pol
+            return False
 
         # Compute slope angle sigma
         dx = pol[1].x() - pol[0].x()
@@ -240,8 +242,10 @@ class Algorithms:
         n = len(pol)
         # Initialize longest edge
         longest_edge = -1
-        # Create convex hull
+        # Create convex hull of possible
         ch = Algorithms.ch_alg(pol)
+        if ch == False:
+            return False
 
         # Process all edges
         for i in range(n):
@@ -267,11 +271,13 @@ class Algorithms:
 
     def weightedBisector(pol: QPolygonF):
         """Returns generalized polygon by using Weighted Bisector algorithm."""
-        # Create convex hull
+        # Create convex hull if possible
         ch = Algorithms.ch_alg(pol)
+        if ch == False:
+            return False
 
         # If the building is triangular, return as no diagonals can be computed
-        if len(ch) <= 4:
+        if len(ch) == 4:
             return ch
 
         # Get diagonals of convex hull

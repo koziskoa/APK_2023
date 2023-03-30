@@ -181,6 +181,9 @@ class Ui_MainForm(object):
         ch_list = []
         for pol in pol_list:
             ch = Algorithms.ch_alg(pol)
+            # If convex hull can't be created, proceed to next polygon
+            if ch == False:
+                continue
             ch_list.append(ch)
         self.Canvas.setConvexHulls(ch_list)
         self.Canvas.repaint()
@@ -191,6 +194,9 @@ class Ui_MainForm(object):
         er_list = []
         for pol in pol_list:
             enclosing_rect = Algorithms.minAreaEnclosingRectangle(pol)
+            # If ER can't be created, proceed to next polygon
+            if enclosing_rect == False:
+                continue
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
@@ -201,6 +207,9 @@ class Ui_MainForm(object):
         er_list = []
         for pol in pol_list:
             enclosing_rect = Algorithms.wallAverage(pol)
+            # If ER can't be created, proceed to next polygon
+            if enclosing_rect == False:
+                continue
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
@@ -211,6 +220,9 @@ class Ui_MainForm(object):
         er_list = []
         for pol in pol_list:
             enclosing_rect = Algorithms.longestEdge(pol)
+            # If ER can't be created, proceed to next polygon
+            if enclosing_rect == False:
+                continue
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
@@ -221,6 +233,9 @@ class Ui_MainForm(object):
         er_list = []
         for pol in pol_list:
             enclosing_rect = Algorithms.weightedBisector(pol)
+            # If ER can't be created, proceed to next polygon
+            if enclosing_rect == False:
+                continue
             er_list.append(enclosing_rect)
         self.Canvas.setEnclosingRectangles(er_list)
         self.Canvas.repaint()
@@ -278,7 +293,6 @@ class Ui_MainForm(object):
         with open(filename, "r", encoding="utf-8") as f:
             data = json.load(f)
             return(data)
-
 
 if __name__ == "__main__":
     import sys
