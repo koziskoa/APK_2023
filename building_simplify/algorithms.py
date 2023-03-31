@@ -242,10 +242,6 @@ class Algorithms:
         n = len(pol)
         # Initialize longest edge
         longest_edge = -1
-        # Create convex hull of possible
-        ch = Algorithms.ch_alg(pol)
-        if ch == False:
-            return False
 
         # Process all edges
         for i in range(n):
@@ -277,7 +273,7 @@ class Algorithms:
             return False
 
         # If the building is triangular, return as no diagonals can be computed
-        if len(ch) == 4:
+        if len(ch) == 4: # GPolygonF 
             return ch
 
         # Get diagonals of convex hull
