@@ -1,0 +1,39 @@
+\chapter*{Zadání}
+
+\par\emph{Vstup: množina budov B =} \{$B_i$\}$_{i=0}^n$, \emph{budova} $B_i = $  \{$P_{i,j}$\}$_{j=1}^m$.
+\par \emph{Výstup: $G(B_i)$}.
+
+\par Ze souboru nečtěte vstupní data představovaná lomovými body budov. Pro tyto účely použijte vhodnou datovou sadu, např. ZABAGED.
+\par Pro každou budovu určtete její hlavní směry metodami.
+
+\begin{itemize}
+  \item Minimum Area Enclosing Rectangle,
+  \item Wall Average.
+\end{itemize}
+
+\par U první metody použijte některý z algoritmů pro konstrukci konvexní obálky. Budovu nahraďte obdélníkem se středem v jejím těžišti orientovaným v obou hlavních směrech, jeho plocha bude stejná jako plocha budovy. Výsledky generalizace vhodně vizualizujte.
+\par Odhadněte efektivitu obou metod, vzájemně je porovnejte a zhodnoťte. Pokuste se identifikovat, pro které tvary budov dávají metody nevhodné výsledky, a pro které naopak poskytují vhodnou aproximaci.
+\bigbreak
+
+% insert table
+\par\textbf{\large Hodnocení:}
+\bigbreak
+\begin{center}
+    \begin{tabular}{|p{14.2cm}|c|} 
+     \hline\large
+         \textbf{Krok} & \textbf{Hodnocení}\\ %[0.5ex] 
+             \hline\hline
+             \small Generalizace budov metodami Minimum Area Enclosing Rectangle a Wall Average. & \small15b \\ 
+             \hline
+             \emph{\small Generalizace budov metodou Longest Edge.} & \emph{\small +5b} \\
+             \hline
+             \emph{\small Generalizace budov metodou Weighted Bisector.} & \emph{\small +8b} \\
+             \hline
+             \emph{\small Implementace další metody konstrukce konvexní obálky.} & \emph{\small +5b} \\
+             \hline
+             \emph{\small Ošetření singulárního případu u / při generování konvexní obálky.} & \emph{\small +2b}\\ 
+             \hline
+             \textbf{Max celkem:} & \textbf{35b}\\ %[0.3ex] 
+             \hline
+    \end{tabular}
+\end{center}

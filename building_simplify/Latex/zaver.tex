@@ -1,0 +1,8 @@
+\chapter*{Závěr}
+\par V teto úloze byly představeny a implementovány vybrané algoritmy pro generalizaci tvarů polygonů. Nejprv byly představeny a implementovány dva algoritmy pro konstrukci konvexní obálky \emph{Jarvis Scan} a \emph{Graham Scan}. S jejich využitím byly poté implementovány čtyři algoritmy pro určení hlavního směru budov: \emph{Minimum Area Enclosing Rectangle}, \emph{Wall Average}, \emph{Longest Edge} a \emph{Weighted Bisector}. Tyto algoritmy byly aplikovány na tři vybrané datasety a následně mezi sebou porovnány a slovně zhodnoceny.
+
+\par Vybrané datasety obsahují různé typy zástavby: historickou část města, sídliště a nesouvislou domovou zástavbu. Ve všech případech se jako nejpřesnější algoritmus pro celkovou generalizaci jeví \emph{Minimum Area Enclosing Rectangle}, poté \emph{Longest Edge}, \emph{Wall Average} a nakonec \emph{Weighted Bisector}. Protože půdorysy většiny budov byly v datasetech především obdélníkového tvaru, pro úspěšné určení hlavního směru budov postačí algoritmy, které pracují pouze s délkami hran budov. V několika případech si však vedli úspěšněji algoritmy pracující primárně s úhly natočení, a to u nekonvexních půdorysů.
+
+\par Aplikaci je vhodné vylepšit o implementování možnosti přiblížení/oddálení polygonů v okně, při načtení většího datasetu se totiž stane obsah okna nečitelný. 
+
+\par Vytvořená aplikace je volně dostupná přes \verb|GitHub| na adrese \url{https://github.com/koziskoa/APK_2023/tree/master/building_simplify}.

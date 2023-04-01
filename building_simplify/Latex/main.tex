@@ -1,0 +1,60 @@
+\documentclass[11pt, a4paper]{report}
+\usepackage[utf8]{inputenc} % Required for inserting images
+\usepackage[skip=10pt plus1pt, indent=0pt]{parskip}
+\usepackage{mathpazo}%font type
+\usepackage{domitian}%font type
+\usepackage[T1]{fontenc}%font type
+\usepackage[czech]{babel}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\usepackage{algpseudocode} 
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+
+\usepackage{floatrow}
+\usepackage{amsmath} % matice
+
+\usepackage{hyperref}
+
+\graphicspath{ {./images} }
+\geometry{a4paper, left=20mm, right=20mm, bottom=25mm, top=20mm}
+
+\begin{document}
+%edit title page
+\begin{titlepage}
+    \centering
+        {\bfseries\Large
+            UNIVERZITA KARLOVA\\
+            PŘÍRODOVĚDECKÁ FAKULTA\\
+            \vskip2cm
+        } 
+        \vfill
+             \includegraphics[width=7cm]{logo_natur} % also works with logo.pdf
+        \vfill
+        {\bfseries\Large
+            \vskip2cm
+            {\Large ALGORITMY POČÍTAČOVÉ KARTOGRAFIE\par}
+            \vskip0.3cm
+            Generalizace budov\\
+            \vskip4.5cm
+        }
+\vfill
+    {\large\raggedleft Daniela DANČEJOVÁ, \\Anna KOŽÍŠKOVÁ, \\Praha 2023\par} 
+\vfill
+\vfill
+\end{titlepage}
+
+% insert  each sections
+\include{zadani}
+\include{problem}
+\include{implementace}
+\include{vysledky}
+\include{zaver}
+\include{zdroje}
+
+\end{document}
+
