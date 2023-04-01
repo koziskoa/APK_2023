@@ -4,7 +4,7 @@ This application takes an input layer of polygons and simplifies their shape by 
 - Minimum Area Enclosing Rectangle,
 - Wall Average,
 - Longest Edge,
-- Weighted Bisector.
+- Weighted Bisector.  
 The user also has the option to construct convex hulls above input polygons by selecting one of the following algorithms:
 - Jarvis Scan Algorithm (Gift Wrapping Algorithm),
 - Graham Scan Algorithm.
