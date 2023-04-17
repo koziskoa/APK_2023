@@ -42,6 +42,26 @@
 \par U algoritmu \textbf{\emph{Wall Average}} již došlo k nesprávnému odhadu hlavního směru některých větších budov, avšak přibližně zachovává jejich původní tvar. Algoritmus \textbf{\emph{Weighted Bisector}} fungoval uspokojivě při obdélníkových budovách. O něco komplikovanější tvary však již nenatočil správně a z tohoto hlediska si vedl hůře než ostatní algoritmy.
 \par Budovu domovu důchodců ani jeden algoritmus nedokázal adekvátně generalizovat pro její tvar. Půdorys ve tvaru písmena L byl ve všech případech nahrazen téměř čtvercovým obdélníkem.
 
+\par V tabulce 1 je vyhodnocena relativní přesnost jednotlivých algoritmů.
+
+\begin{table}[htbp]
+    \centering
+    \caption{ Úspěšnost jednotlivých algoritmů v \%}
+    \begin{tabular}{|l||c||c||c||c|} 
+     \hline\large
+         \textbf{Algoritmus} & \textbf{Vinohrady} & \textbf{Prosek} & \textbf{Chotěboř} & \textbf{ průměr }\\ %[0.5ex] 
+             \hline\hline
+             \emph{\small MAER} & \small 92 &\small 90 & \small 95 & \small 92,3 \\
+             \hline
+             \emph{\small Wall Average} & \small 87 &\small 78 & \small 89 & \small 84,6 \\
+             \hline
+             \emph{\small Longest Edge} & \small 95 &\small 83 & \small 91 & \small 89,6 \\
+             \hline
+             \emph{\small Weighted B.} & \small 55 &\small 70 & \small 80 & \small 68,3 \\
+             \hline
+    \end{tabular}
+\end{table}
+
 \section*{Shrnutí}
 
-\par Pro vybrané datasety se jako nejvhodnější algoritmus pro určení hlavního směru budovy jeví \textbf{\emph{Minimum Area Enclosing Rectangle}}, pak \textbf{\emph{Longest Edge}}. Nejméně uspokojivé výsledky dosahoval algoritmus \textbf{\emph{Weighted Bisector}}, který si však v několika případech dokázal lépe poradit s nekonvexními půdorysy. Algoritmus \textbf{\emph{Wall Average}} dosahoval různé úspěšnosti. Ve vlastní implementaci tohoto algoritmu se pracuje s aritmetickým průměrem zbytků úhlů a bylo by vhodné porovnat tyto výsledky s verzí, která pracuje s váženým průměrem zbytků.
+\par Pro vybrané datasety se jako nejvhodnější algoritmus pro určení hlavního směru budovy jeví \textbf{\emph{Minimum Area Enclosing Rectangle}} (toto tvrzení potvrzuje i Tabulka 1), pak \textbf{\emph{Longest Edge}}. Nejméně uspokojivé výsledky dosahoval algoritmus \textbf{\emph{Weighted Bisector}}, který si však v několika případech dokázal lépe poradit s nekonvexními půdorysy. Algoritmus \textbf{\emph{Wall Average}} dosahoval různé úspěšnosti. Ve vlastní implementaci tohoto algoritmu se pracuje s aritmetickým průměrem zbytků úhlů a bylo by vhodné porovnat tyto výsledky s verzí, která pracuje s váženým průměrem zbytků.
