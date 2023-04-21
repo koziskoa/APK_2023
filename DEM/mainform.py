@@ -127,6 +127,7 @@ class Ui_MainForm(object):
         self.actionCreate_DMT.triggered.connect(self.runDT)
         self.actionCreate_lines.triggered.connect(self.runContourLines)
         self.actionAnalyze_slope.triggered.connect(self.runSlope)
+        self.actionAnalyze_aspect.triggered.connect(self.runAspect)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -186,6 +187,13 @@ class Ui_MainForm(object):
         a = Algorithms()
         dtm = a.analyzeDTMSlope(dt)
         self.Canvas.setSlope(dtm)
+        self.Canvas.repaint()
+
+    def runAspect(self):
+        dt = self.Canvas.getDT()
+        a = Algorithms()
+        dtm = a.analyzeDTMAspect(dt)
+        self.Canvas.setAspect(dtm)
         self.Canvas.repaint()
 
 

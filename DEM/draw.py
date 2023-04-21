@@ -58,10 +58,10 @@ class Draw(QWidget):
         for t in self.__triangles:
 
             # get triangles slope
-            slope = t.getSlope()
+            aspect = t.getAspect()
             
             # convert to color
-            col = 255 - int(slope * k)
+            col = 255 - int(abs(aspect) * k)
 
             #create color
             color = QColor(col, col, col)
@@ -99,6 +99,9 @@ class Draw(QWidget):
         self.__dt = dt
     
     def setSlope(self, triangles: list[Triangle]):
+        self.__triangles = triangles
+
+    def setAspect(self, triangles: list[Triangle]):
         self.__triangles = triangles
     
     def getDT(self):

@@ -522,10 +522,8 @@ class Algorithms:
         
         budeme procházet DMT
         vezmeme trojúhelník a spočítáme pro něj slope"""
-    
-    def createSlope(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
-        #get Triangle Slope
-        # diractions, first vector
+
+    def getNormalVector(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
         ux = p2.x() - p1.x()
         uy = p2.y() - p1.y()
         uz = p2.getZ() - p1.getZ()
@@ -536,9 +534,14 @@ class Algorithms:
         vz = p3.getZ() - p1.getZ()
 
         # normal vector, components
-        nx = uy*vz - vy*uz 
-        ny = -(ux*vz - vx*uz) 
-        nz = ux * vy - vx*uy
+        nx = uy * vz - vy * uz
+        ny = -(ux * vz - vx * uz)
+        nz = ux * vy - vx * uy
+
+        return nx, ny, nz
+
+    def createSlope(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+        nx, ny, nz = self.getNormalVector(p1, p2, p3)
 
         # norm 
         n = sqrt(nx*nx + ny*ny + nz*nz)
@@ -547,7 +550,13 @@ class Algorithms:
         slope = acos(nz/n)
 
         return slope
-    
+
+    def createAspect(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+        nx, ny, nz = self.getNormalVector(p1, p2, p3)
+        aspect = atan2(ny, nx)
+
+        return aspect
+
     def analyzeDTMSlope(self, dt:list[Edge]):
         """returns list of triangles"""
 
@@ -570,6 +579,28 @@ class Algorithms:
             dtm.append(triangle)
 
         return dtm
+
+    def analyzeDTMAspect(self, dt:list[Edge]):
+        dtm: list[Triangle] = []
+
+        # process all triangles
+        for i in range(0, len(dt), 3):
+            # get triangles edges
+            p1 = dt[i].getStart()
+            p2 = dt[i].getEnd()
+            p3 = dt[i + 1].getEnd()
+
+            # compute slope
+            aspect = self.createAspect(p1, p2, p3)
+
+            # create triangle
+            triangle = Triangle(p1, p2, p3, 0, aspect)
+
+            # Add triangle to the list
+            dtm.append(triangle)
+
+        return dtm
+
     """
     expozici si uděláme sami - jeeeee - bezesné noci
     """
