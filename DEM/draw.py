@@ -126,29 +126,30 @@ class Draw(QWidget):
     
     def getAspectColor(self, aspect):
         """ gets color for aspect """
-        if (0 <= aspect <= pi/8) or (15*pi/8 <= aspect <= 2*pi): #east
+        if (0 <= aspect <= pi/8) or (15*pi/8 <= aspect <= 2*pi) : #east - drawn correctly
             return QColor(0, 104, 192)
         
-        if pi/8 < aspect < 3*pi/8 : #northeast
-            return QColor(0, 173, 67)
-        
-        if 3*pi/8 <= aspect <= 5*pi/8 : #north
-            return QColor(154, 251, 12)
-        
-        if 5*pi/8 < aspect < 7*pi/8 : #northwest
-            return QColor(244, 250, 0)
-        
-        if 7*pi/8 <= aspect <= 9*pi/8 : #west
-            return QColor(255, 171, 71)
-        
-        if 9*pi/8 < aspect < 11*pi/8 : #southwest
-            return QColor(255, 85, 104)
-        
-        if 11*pi/8 <= aspect <= 13*pi/8 : #south
+        elif (pi/8 < aspect < 3*pi/8) : #northeast
+            return QColor(108, 0, 163)
+                        
+        elif (3*pi/8 <= aspect <= 5*pi/8) : #north = south
             return QColor(202, 0, 156)
         
-        if 13*pi/8 < aspect < 15*pi/8 : #southeast
-            return QColor(108, 0, 163)
+        elif (5*pi/8 < aspect < 7*pi/8) : #northwest
+            return QColor(255, 85, 104)
+        
+        elif (7*pi/8 <= aspect <= 9*pi/8) : #west - drawn correctly
+            return QColor(255, 171, 71)
+        
+        elif (9*pi/8 < aspect < 11*pi/8) : #southwest
+            return QColor(244, 250, 0)
+        
+        elif (11*pi/8 <= aspect <= 13*pi/8) : #south = north
+            return QColor(154, 251, 12)
+        
+        elif (13*pi/8 < aspect < 15*pi/8) : #southeast
+            return QColor(0, 173, 67)
+        
 
     def setDT(self, dt : list[Edge]):
         self.__dt = dt
