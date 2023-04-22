@@ -554,6 +554,8 @@ class Algorithms:
     def createAspect(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
         nx, ny, nz = self.getNormalVector(p1, p2, p3)
         aspect = atan2(ny, nx)
+        if aspect < 0 :
+            aspect += 2*pi
 
         return aspect
 

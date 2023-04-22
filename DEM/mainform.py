@@ -187,6 +187,7 @@ class Ui_MainForm(object):
         dt = self.Canvas.getDT()
         a = Algorithms()
         dtm = a.analyzeDTMSlope(dt)
+        self.Canvas.switchSlopeAspect(0)
         self.Canvas.setSlope(dtm)
         self.Canvas.repaint()
 
@@ -194,6 +195,7 @@ class Ui_MainForm(object):
         dt = self.Canvas.getDT()
         a = Algorithms()
         dtm = a.analyzeDTMAspect(dt)
+        self.Canvas.switchSlopeAspect(1)
         self.Canvas.setAspect(dtm)
         self.Canvas.repaint()
 
