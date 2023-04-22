@@ -112,4 +112,12 @@ class Draw(QWidget):
 
     def getPoints(self):
         return self.__points
+    
+    def clearCanvas(self):
+        """Clears canvas."""
+        self.__points = []
+        self.__dt = []
+        self.__contours = []
+        self.__triangles = []
+        
         

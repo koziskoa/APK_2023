@@ -128,6 +128,7 @@ class Ui_MainForm(object):
         self.actionCreate_lines.triggered.connect(self.runContourLines)
         self.actionAnalyze_slope.triggered.connect(self.runSlope)
         self.actionAnalyze_aspect.triggered.connect(self.runAspect)
+        self.actionClear.triggered.connect(self.clearButton)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -196,6 +197,10 @@ class Ui_MainForm(object):
         self.Canvas.setAspect(dtm)
         self.Canvas.repaint()
 
+    def clearButton(self):
+        """Clears canvas."""
+        self.Canvas.clearCanvas()
+        self.Canvas.repaint()
 
 if __name__ == "__main__":
     import sys
