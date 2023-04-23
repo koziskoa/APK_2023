@@ -7,10 +7,48 @@ from Edge import *
 from triangle import *
 
 class Algorithms:
+    """
+    A class to store algorithms for creating DEM, analysing DEM and other auxiliary methods.
+
+    Methods for creating DEM
+    ----------
+        getDelaunayPoint(self, p1: QPoint3DF, p2: QPoint3DF, points:list[QPoint3DF]):
+
+        updateAEL(self, edge: Edge, ael: list[Edge]):
+
+        getNearestPoint(self, p: QPoint3DF, points: list[QPoint3DF]):
+
+        createDT(self, points: list[QPoint3DF]):
+    
+        Methods for analysing DEM
+    ----------
+        getContourLinePoint(self, p1: QPoint3DF, p2: QPoint3DF, z: float):
+
+        createContourLines(self, dt: list[Edge], zmin:float, zmax:float, dz:float):
+
+        createSlope(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+
+        analyzeDTMSlope(self, dt:list[Edge]):
+
+        createAspect(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+
+        analyzeDTMAspect(self, dt:list[Edge]):
+
+    Auxiliary methods
+    ----------
+        get2LinesAngle(self,p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
+
+        euclidDistance(self, p1:QPointF, p2: QPointF):
+
+        getPointAndLinePosition(self, p: QPoint3DF, p1: QPoint3DF, p2: QPoint3DF):
+
+        getNormalVector(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+    """
     def __init__(self):
         pass
     
     def get2LinesAngle(self,p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
+        """Computes angle between two given lines"""
         ux = p2.x()-p1.x()
         uy = p2.y()-p1.y()
 
@@ -31,12 +69,19 @@ class Algorithms:
     
 
     def euclidDistance(self, p1:QPointF, p2: QPointF):
+        """Get distance between two points"""
         a = p2.x() - p1.x()
         b = p2.y() - p1.y()
         dist = sqrt(a**2 + b**2)
         return dist
 
     def getPointAndLinePosition(self, p: QPoint3DF, p1: QPoint3DF, p2: QPoint3DF):
+        """
+        Returns the information about point a line position
+            1: point is located in the left halfplane
+            0: point is located in the right halfplane
+           -1: point is collinear with the line
+        """
         ux = p2.x()-p1.x()
         uy = p2.y()-p1.y()
 
@@ -58,7 +103,7 @@ class Algorithms:
         
         # funkce v podstatě na hledání maxima
     def getDelaunayPoint(self, p1: QPoint3DF, p2: QPoint3DF, points:list[QPoint3DF]):
-        '''Fid optimal Delaunay point'''
+        '''Fits optimal Delaunay point'''
         idx_max = -1
         om_max = 0
 
@@ -75,10 +120,10 @@ class Algorithms:
                         om_max = omega
                         idx_max = i
         return idx_max
-    # update active edges list
+    
     def updateAEL(self, edge: Edge, ael: list[Edge]):
-        """ update of AEL"""
-       #change oreientation
+        """Updates active edges list - AEL"""
+        #change oreientation
         e_o = edge.SwitchOrientation()
         # opposite edge in AEL
         if e_o in ael:
@@ -93,7 +138,7 @@ class Algorithms:
     vrcí list DT
     """    
     def getNearestPoint(self, p: QPoint3DF, points: list[QPoint3DF]):
-        # find the nearest point
+        """Finds the nearest point"""
         idx_min = -1
         d_min = inf
 
@@ -185,7 +230,7 @@ class Algorithms:
 
         return QPoint3DF(xb, yb, z)
     
-    def createContourLines(self, dt: list[Edge], zmin:float, zmax:float, dz:float ):
+    def createContourLines(self, dt: list[Edge], zmin:float, zmax:float, dz:float):
         # Create contour lines inside the given interval and step
         contours: list[Edge] = []
 
@@ -263,6 +308,7 @@ class Algorithms:
         vezmeme trojúhelník a spočítáme pro něj slope"""
 
     def getNormalVector(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+        """Gets the normal vector of the plane of the triangle gof the plane of the triangle given by the three points"""
         ux = p2.x() - p1.x()
         uy = p2.y() - p1.y()
         uz = p2.getZ() - p1.getZ()
@@ -280,6 +326,7 @@ class Algorithms:
         return nx, ny, nz
 
     def createSlope(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+        """Computes the slope of the triangle given by the three points"""
         nx, ny, nz = self.getNormalVector(p1, p2, p3)
 
         # norm 
@@ -291,6 +338,7 @@ class Algorithms:
         return slope
 
     def createAspect(self, p1: QPoint3DF, p2: QPoint3DF, p3: QPoint3DF):
+        """Computes the aspect of the triangle given by the three points"""
         nx, ny, nz = self.getNormalVector(p1, p2, p3)
         aspect = atan2(ny, nx)
         if aspect < 0 :
@@ -299,7 +347,7 @@ class Algorithms:
         return aspect
 
     def analyzeDTMSlope(self, dt:list[Edge]):
-        """returns list of triangles"""
+        """Returns list of triangles with the computed slope"""
 
         dtm: list[Triangle] = []
 
@@ -322,6 +370,7 @@ class Algorithms:
         return dtm
 
     def analyzeDTMAspect(self, dt:list[Edge]):
+        """Returns list of triangles with the computed aspect"""
         dtm: list[Triangle] = []
 
         # process all triangles
@@ -341,7 +390,3 @@ class Algorithms:
             dtm.append(triangle)
 
         return dtm
-
-    """
-    expozici si uděláme sami - jeeeee - bezesné noci
-    """
