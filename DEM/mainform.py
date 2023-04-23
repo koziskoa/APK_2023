@@ -133,6 +133,7 @@ class Ui_MainForm(object):
         self.actionAnalyze_aspect.triggered.connect(self.runAspect)
         self.actionClear.triggered.connect(self.clearButton)
         self.actionAbout.triggered.connect(self.aboutClick)
+        self.actionExit.triggered.connect(self.exitClick)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -154,9 +155,10 @@ class Ui_MainForm(object):
         self.actionAnalyze_slope.setText(_translate("MainForm", "Analyze slope"))
         self.actionSettings.setText(_translate("MainForm", "Settings"))
         self.actionClear.setText(_translate("MainForm", "Clear"))
+        self.actionAbout.setText(_translate("MainForm", "About"))
 
     def runDT(self):
-        #Get points
+        """Gets Delaunay triangulation from points"""
         points = self.Canvas.getPoints()
 
         #Run triangulation
@@ -215,6 +217,10 @@ class Ui_MainForm(object):
         """Opens GitHub repository link."""
         url = QUrl("https://github.com/koziskoa/APK_2023/tree/master/DEM")
         QDesktopServices.openUrl(url)
+
+    def exitClick(self):
+        """Closes the application."""
+        sys.exit()
 
 if __name__ == "__main__":
     import sys
