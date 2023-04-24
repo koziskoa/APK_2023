@@ -8,6 +8,67 @@ from triangle import *
 from math import *
 
 class Draw(QWidget):
+    """
+    A class to process and draw polygons on canvas.
+
+    ---
+
+    Attributes
+    ----------
+    __points (list[QPoint3DF]):
+        List of input point cloud
+    __dt (list[Edge]):
+        List of created Delaunay triangulation
+    __contours (list[Edge]):
+        List of created contour lines
+    __triangles (list[Triangle])
+        List of created ractangles
+    __switch_mode
+        default value:-1
+
+    __polyg_list (list):
+        List of input polygons
+    __er_list (list):
+        List of created enclosing rectangles
+    __ch_list (list):
+        List of created convex hulls
+
+    Methods
+    -------
+    mousePressEvent(self, e: QMouseEvent
+        assigns coordinates after the mouse is pressed
+    
+    paintEvent(e:QPaintEvent):
+        Handles drawing of objects on canvas
+
+    clearCanvas():
+        Clears canvas.
+
+    resizePolygons(xmin, ymin, xmax, ymax):
+        Resizes input data to fit to display.
+
+    findBoundingPoints(p:QPointF, xmin, ymin, xmax, ymax):
+        Finds minimum and maximum coordinates of bounding box around input polygons.
+
+    loadData(data):
+        Loads input JSON file.
+    
+    setDT(self, dt : list[Edge]):
+
+    setSlope(self, triangles: list[Triangle]):
+
+    setAspect(self, triangles: list[Triangle]):
+
+    setContours(self, contours : list[Edge]):
+
+    getPoints(self):
+    
+    getDT(self):
+
+    getAspectColor(self, aspect):
+
+    switchSlopeAspect(self, val):
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,7 +96,7 @@ class Draw(QWidget):
         self.repaint()
 
     def paintEvent(self, e:QPaintEvent):
-        #Draw polygon
+        """Handles drawing of objects"""
 
         #Create graphic object
         qp = QPainter(self)
@@ -44,27 +105,10 @@ class Draw(QWidget):
         qp.begin(self)
 
         k = (510/(pi/2))
-
-        
-        # process triangles one by one
-        """for t in self.__triangles:
-
-            # get triangles slope
-            slope = t.getSlope()
-            
-            # convert to color
-            col = 255 - int(abs(slope) * k)
-
-            #create color
-            color = QColor(col, col, col)
-            qp.setBrush(color)
-            
-            #create colorful polygon
-            pol = QPolygonF([t.getP1(), t.getP2(), t.getP3()])
-
-            qp.drawPolygon(pol)"""
-        
+ 
+        # process triangles one by one        
         for t in self.__triangles:
+            # condition of settings for drawing DEM slope
             if self.__switch_mode == 0:
                 # get triangles slope
                 slope = t.getSlope()
@@ -82,6 +126,7 @@ class Draw(QWidget):
 
                 qp.drawPolygon(pol)
 
+            # condition of settings for drawing DEM aspect
             if self.__switch_mode == 1:
                 aspect = t.getAspect()
                 color = self.getAspectColor(aspect)
@@ -90,7 +135,6 @@ class Draw(QWidget):
 
                 qp.drawPolygon(pol)
 
-        
         # Set attributes
         qp.setPen(Qt.GlobalColor.green)
 

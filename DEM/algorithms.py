@@ -203,8 +203,6 @@ class Algorithms:
                 self.updateAEL(e3, ael)
         return dt
 
-
-
         """
         hledáme takový bod, který bude ležet od našeho nalezeného bodu vlavo
 
@@ -224,6 +222,7 @@ class Algorithms:
         """
 
     def getContourLinePoint(self, p1: QPoint3DF, p2: QPoint3DF, z: float):
+        """"""
         # Intersection of line and horizontal plane
         xb = (p2.x() - p1.x())*(z - p1.getZ())/(p2.getZ() - p1.getZ()) + p1.x()
         yb = (p2.y() - p1.y()) * (z - p1.getZ()) / (p2.getZ() - p1.getZ()) + p1.y()
@@ -231,6 +230,7 @@ class Algorithms:
         return QPoint3DF(xb, yb, z)
     
     def createContourLines(self, dt: list[Edge], zmin:float, zmax:float, dz:float):
+        """"""
         # Create contour lines inside the given interval and step
         contours: list[Edge] = []
 
