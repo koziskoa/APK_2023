@@ -14,7 +14,7 @@ import csv
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
-        MainForm.resize(815, 600)
+        MainForm.showMaximized()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

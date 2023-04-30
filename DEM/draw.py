@@ -214,7 +214,7 @@ class Draw(QWidget):
 
         #qp.setPen(pen)
 
-        index_contours_labels = self.__index_contours[::3]
+        index_contours_labels = self.__index_contours[::30]
         for edge in index_contours_labels:
             angle = edge.getEdgeAngle()
             if angle < 0:
@@ -226,7 +226,7 @@ class Draw(QWidget):
             qp.setBrush(Qt.GlobalColor.white)
             pen.setColor(Qt.GlobalColor.white)
             qp.setPen(pen)
-            qp.drawRect(QRectF(QPointF(5,-5), QSizeF(13,12)).normalized())
+            qp.drawRect(QRectF(QPointF(5,-5), QSizeF(25,12)).normalized())
             qp.setOpacity(1)
             pen.setColor(Qt.GlobalColor.darkRed)
             qp.setPen(pen)
