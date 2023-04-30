@@ -6,6 +6,8 @@ from Edge import *
 from random import *
 from triangle import * 
 from math import *
+from algorithms import *
+from dialog import *
 
 class Draw(QWidget):
     """
@@ -79,6 +81,42 @@ class Draw(QWidget):
         self.__contours: list[Edge] = []
         self.__triangles: list[Triangle] = []
         self.__switch_mode = -1
+        self.__zmin = 0
+        self.__zmax = 1650
+        self.__dz = 10
+
+    def setContourSettings(self):
+        a = Algorithms()
+        dialog = InputDialog()
+        if dialog.exec():
+            zmin, zmax, dz = dialog.getInputs()
+            try:
+                zmin = int(zmin)
+                zmax = int(zmax)
+                dz = int(dz)
+                self.__zmin = zmin
+                self.__zmax = zmax
+                self.__dz = dz
+
+            except ValueError:
+                zmin, zmax, dz = a.setContourDefaultSettings()
+                self.contourInvalidInput()
+                self.__zmin = zmin
+                self.__zmax = zmax
+                self.__dz = dz
+        else:
+            return
+
+    def getContourSettings(self):
+        zmin, zmax, dz = self.setContourSettings()
+        return zmin, zmax, dz
+
+    def contourInvalidInput(self):
+        """"""
+        dlg = QMessageBox()
+        dlg.setWindowTitle("Invalid Input")
+        dlg.setText("The input for contour settings is invalid. Default settings have been applied. (min = 0, max = 1650, step = 10)")
+        dlg.exec()
 
     def mousePressEvent(self, e:QMouseEvent):
         #Left mouse button click
@@ -206,6 +244,15 @@ class Draw(QWidget):
     
     def getDT(self):
         return self.__dt
+
+    def getZMin(self):
+        return self.__zmin
+
+    def getZMax(self):
+        return self.__zmax
+
+    def getDZ(self):
+        return self.__dz
 
     def setContours(self, contours : list[Edge]):
         self.__contours = contours

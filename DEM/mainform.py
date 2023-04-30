@@ -8,6 +8,7 @@ from draw import Draw
 from Edge import *
 from QPoint3DF import *
 from algorithms import *
+from dialog import *
 
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
@@ -86,11 +87,11 @@ class Ui_MainForm(object):
         icon5.addPixmap(QtGui.QPixmap("icons/slope2.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionAnalyze_slope.setIcon(icon5)
         self.actionAnalyze_slope.setObjectName("actionAnalyze_slope")
-        self.actionSettings = QtGui.QAction(parent=MainForm)
+        self.actionContourSettings = QtGui.QAction(parent=MainForm)
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap("icons/settings.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionSettings.setIcon(icon6)
-        self.actionSettings.setObjectName("actionSettings")
+        self.actionContourSettings.setIcon(icon6)
+        self.actionContourSettings.setObjectName("actionContourSettings")
         self.actionClear = QtGui.QAction(parent=MainForm)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap("icons/clear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
@@ -102,12 +103,13 @@ class Ui_MainForm(object):
         self.actionAbout.setIcon(icon8)
         self.actionAbout.setObjectName("actionAbout")
         self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
         self.menuAnalysis.addAction(self.actionCreate_DMT)
         self.menuAnalysis.addAction(self.actionCreate_lines)
         self.menuAnalysis.addAction(self.actionAnalyze_aspect)
         self.menuAnalysis.addAction(self.actionAnalyze_slope)
-        self.menuSettings.addAction(self.actionSettings)
+        self.menuSettings.addAction(self.actionContourSettings)
         self.menuView.addAction(self.actionClear)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -122,7 +124,7 @@ class Ui_MainForm(object):
         self.toolBar.addAction(self.actionAnalyze_slope)
         self.toolBar.addAction(self.actionAnalyze_aspect)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionSettings)
+        self.toolBar.addAction(self.actionContourSettings)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear)
         
@@ -134,6 +136,7 @@ class Ui_MainForm(object):
         self.actionClear.triggered.connect(self.clearButton)
         self.actionAbout.triggered.connect(self.aboutClick)
         self.actionExit.triggered.connect(self.exitClick)
+        self.actionContourSettings.triggered.connect(self.runContourSettings)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -147,20 +150,21 @@ class Ui_MainForm(object):
         self.menuView.setTitle(_translate("MainForm", "View"))
         self.menuHelp.setTitle(_translate("MainForm", "Help"))
         self.toolBar.setWindowTitle(_translate("MainForm", "toolBar"))
-        self.actionOpen.setText(_translate("MainForm", "Open"))
+        self.actionOpen.setText(_translate("MainForm", "Open..."))
         self.actionExit.setText(_translate("MainForm", "Exit"))
         self.actionCreate_DMT.setText(_translate("MainForm", "Create DMT"))
         self.actionCreate_lines.setText(_translate("MainForm", "Create lines"))
         self.actionAnalyze_aspect.setText(_translate("MainForm", "Analyze aspect"))
         self.actionAnalyze_slope.setText(_translate("MainForm", "Analyze slope"))
-        self.actionSettings.setText(_translate("MainForm", "Settings"))
+        self.actionContourSettings.setText(_translate("MainForm", "Contour Settings"))
         self.actionClear.setText(_translate("MainForm", "Clear"))
-        self.actionAbout.setText(_translate("MainForm", "About"))
+        self.actionAbout.setText(_translate("MainForm", "About..."))
 
     def runDT(self):
         """Gets Delaunay triangulation from points"""
         points = self.Canvas.getPoints()
-
+        if points == []:
+            return
         #Run triangulation
         a = Algorithms()
         dt = a.createDT(points)
@@ -168,6 +172,9 @@ class Ui_MainForm(object):
         #Set results
         self.Canvas.setDT(dt)
         self.Canvas.repaint()
+
+    def runContourSettings(self):
+        self.Canvas.setContourSettings()
 
     def runContourLines(self):
         """Analyzes contour lines from DEM
@@ -177,14 +184,13 @@ class Ui_MainForm(object):
             vrátit to třídy draw a vykreslit - set.coutourlines
             repaint()
         """
-        zmin = 0
-        zmax = 1650
-        dz = 10
-        
-        dt = self. Canvas.getDT()
-
-        # create contour lines
         a = Algorithms()
+        dt = self.Canvas.getDT()
+        if dt == []:
+            return
+        zmin = self.Canvas.getZMin()
+        zmax = self.Canvas.getZMax()
+        dz = self.Canvas.getDZ()
         contours = a.createContourLines(dt, zmin, zmax, dz)
         #set results to draw
         self.Canvas.setContours(contours)
@@ -193,6 +199,8 @@ class Ui_MainForm(object):
     def runSlope(self):
         """Analyzes DEM slope"""
         dt = self.Canvas.getDT()
+        if dt == []:
+            return
         a = Algorithms()
         dtm = a.analyzeDTMSlope(dt)
         self.Canvas.switchSlopeAspect(0)
@@ -202,6 +210,8 @@ class Ui_MainForm(object):
     def runAspect(self):
         """Analyzes DEM aspect"""
         dt = self.Canvas.getDT()
+        if dt == []:
+            return
         a = Algorithms()
         dtm = a.analyzeDTMAspect(dt)
         self.Canvas.switchSlopeAspect(1)

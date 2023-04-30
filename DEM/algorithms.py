@@ -228,7 +228,10 @@ class Algorithms:
         yb = (p2.y() - p1.y()) * (z - p1.getZ()) / (p2.getZ() - p1.getZ()) + p1.y()
 
         return QPoint3DF(xb, yb, z)
-    
+
+    def setContourDefaultSettings(self):
+        return 0, 1650, 10
+
     def createContourLines(self, dt: list[Edge], zmin:float, zmax:float, dz:float):
         """"""
         # Create contour lines inside the given interval and step
@@ -248,7 +251,7 @@ class Algorithms:
 
             # test intersections of all planes
             for z in range(zmin, zmax, dz):
-                #Get heigh differencies
+                #Get height differences
                 dz1 = z - z1
                 dz2 = z - z2
                 dz3 = z - z3
@@ -281,7 +284,7 @@ class Algorithms:
                     # Add contour to list of contours
                     contours.append(e)
 
-                # Edges (p3,p1) and (p1,p          2) are intersected by plane
+                # Edges (p3,p1) and (p1,p2) are intersected by plane
                 elif dz3 * dz1 <= 0 and dz1 * dz2 <= 0:
                     # Compute intersections
                     a = self.getContourLinePoint(p3, p1, z)
