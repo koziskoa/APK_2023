@@ -9,6 +9,7 @@ from Edge import *
 from QPoint3DF import *
 from algorithms import *
 from dialog import *
+import csv
 
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
@@ -137,6 +138,7 @@ class Ui_MainForm(object):
         self.actionAbout.triggered.connect(self.aboutClick)
         self.actionExit.triggered.connect(self.exitClick)
         self.actionContourSettings.triggered.connect(self.runContourSettings)
+        self.actionOpen.triggered.connect(self.processFile)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -233,6 +235,37 @@ class Ui_MainForm(object):
     def exitClick(self):
         """Closes the application."""
         sys.exit()
+
+    def openFile(self):
+        """Opens CSV file."""
+        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input_files/.",
+                                                  filter="CSV file (*.csv)")
+        # Return if no file has been opened
+        if filename == "":
+            return None
+        # Return data from JSON
+        with open(filename, 'r', encoding='utf-8-sig') as f:
+            data = csv.reader(f, delimiter = ';')
+            self.Canvas.loadData(data)
+
+    def processFile(self):
+        """Handles opening and loading the data."""
+        # Open file
+        data = self.openFile()
+        # Return if no file has been opened
+        if data == None:
+            return
+        # Clear canvas for new polygon layer
+        self.Canvas.clearCanvas()
+        # Try to load and process the data
+        correct_data = self.Canvas.loadData(data)
+        # Alert the user if JSON has incorrect formatting
+        if correct_data == False:
+            dlg = QtWidgets.QMessageBox()
+            dlg.setWindowTitle("Error Message")
+            dlg.setText("Invalid CSV file")
+            dlg.exec()
+            return
 
 if __name__ == "__main__":
     import sys
