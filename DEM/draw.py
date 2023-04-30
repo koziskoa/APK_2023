@@ -79,6 +79,7 @@ class Draw(QWidget):
         self.__points: list[QPoint3DF] = []
         self.__dt : list[Edge] = []
         self.__contours: list[Edge] = []
+        self.__index_contours: list[Edge] = []
         self.__triangles: list[Triangle] = []
         self.__switch_mode = -1
         self.__zmin = 0
@@ -138,10 +139,13 @@ class Draw(QWidget):
 
         #Create graphic object
         qp = QPainter(self)
-
+        pen = QPen()
+        font = QFont()
+        font.setFamily('Times')
+        font.setBold(True)
+        qp.setFont(font)
         #Start draw
         qp.begin(self)
-
         k = (510/(pi/2))
  
         # process triangles one by one        
@@ -174,29 +178,63 @@ class Draw(QWidget):
                 qp.drawPolygon(pol)
 
         # Set attributes
-        qp.setPen(Qt.GlobalColor.green)
+        pen.setColor(Qt.GlobalColor.green)
+        qp.setPen(pen)
 
         #Draw triangles
         for edge in self.__dt:
             qp.drawLine(int(edge.getStart().x()), int(edge.getStart().y()), int(edge.getEnd().x()), int(edge.getEnd().y()))
 
         #Set attributes
-        qp.setPen(Qt.GlobalColor.darkRed)
+        pen.setWidth(1)
+        pen.setColor(Qt.GlobalColor.darkRed)
+        qp.setPen(pen)
         #qp.setBrush(Qt.GlobalColor.yellow)
 
         # Draw contour lines
         for edge in self.__contours:
             qp.drawLine(int(edge.getStart().x()), int(edge.getStart().y()), int(edge.getEnd().x()), int(edge.getEnd().y()))
-        
-        #Set attributes
+
+        pen.setWidth(3)
+        pen.setColor(Qt.GlobalColor.darkRed)
+        qp.setPen(pen)
+
+        for edge in self.__index_contours:
+            qp.drawLine(int(edge.getStart().x()), int(edge.getStart().y()), int(edge.getEnd().x()), int(edge.getEnd().y()))
+
+        # Set attributes
         qp.setPen(Qt.GlobalColor.black)
         qp.setBrush(Qt.GlobalColor.white)
 
-        #Draw points
-        r = 10 # jako 10 pixelů
+        # Draw points
+        r = 10  # jako 10 pixelů
         for point in self.__points:
-            qp.drawEllipse(int(point.x()) - r, int(point.y()) - r, 2*r, 2*r)# x- r a y - r
-            qp.drawText(point,str(int(point.getZ())))
+            qp.drawEllipse(int(point.x()) - r, int(point.y()) - r, 2 * r, 2 * r)  # x- r a y - r
+            qp.drawText(int(point.x())-5,int(point.y())+5, str(int(point.getZ())))
+
+        #qp.setPen(pen)
+
+        index_contours_labels = self.__index_contours[::3]
+        for edge in index_contours_labels:
+            angle = edge.getEdgeAngle()
+            if angle < 0:
+                angle += 2*pi
+            angle = angle * 180/pi
+            qp.translate(edge.getEdgeCenterX(), edge.getEdgeCenterY())
+            qp.rotate(angle+180)
+            qp.setOpacity(1)
+            qp.setBrush(Qt.GlobalColor.white)
+            pen.setColor(Qt.GlobalColor.white)
+            qp.setPen(pen)
+            qp.drawRect(QRectF(QPointF(5,-5), QSizeF(13,12)).normalized())
+            qp.setOpacity(1)
+            pen.setColor(Qt.GlobalColor.darkRed)
+            qp.setPen(pen)
+            qp.drawText(5, 5, str(edge.getStart().getZ()))
+            qp.rotate(-(angle+180))
+            qp.translate(-edge.getEdgeCenterX(), -edge.getEdgeCenterY())
+        
+
         
         
         # Set attributes
@@ -254,8 +292,9 @@ class Draw(QWidget):
     def getDZ(self):
         return self.__dz
 
-    def setContours(self, contours : list[Edge]):
+    def setContours(self, contours : list[Edge], index_contours : list[Edge]):
         self.__contours = contours
+        self.__index_contours = index_contours
 
     def getPoints(self):
         return self.__points
@@ -269,6 +308,7 @@ class Draw(QWidget):
         self.__points = []
         self.__dt = []
         self.__contours = []
+        self.__index_contours = []
         self.__triangles = []
 
         

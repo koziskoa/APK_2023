@@ -234,9 +234,12 @@ class Algorithms:
 
     def createContourLines(self, dt: list[Edge], zmin:float, zmax:float, dz:float):
         """"""
+        if dz == 0:
+            return
+
         # Create contour lines inside the given interval and step
         contours: list[Edge] = []
-
+        index_contours: list[Edge] = []
         #Process all triangles
         for i in range(0,len(dt),3):
             #Get triangle vertices
@@ -249,13 +252,15 @@ class Algorithms:
             z2 = p2.getZ()
             z3 = p3.getZ()
 
+            contour_counter = -1
+
             # test intersections of all planes
             for z in range(zmin, zmax, dz):
                 #Get height differences
                 dz1 = z - z1
                 dz2 = z - z2
                 dz3 = z - z3
-
+                contour_counter += 1
                 #Triangle is coplanar
                 if dz1 == 0 and dz2 == 0 and dz3 == 0:
                     continue
@@ -270,7 +275,11 @@ class Algorithms:
                     e = Edge(a, b)
 
                     #Add contour to list of contours
-                    contours.append(e)
+                    if contour_counter % 5 == 0:
+                        index_contours.append(e)
+
+                    else:
+                        contours.append(e)
 
                 # Edges (p2,p3) and (p3,p1) are intersected by plane
                 elif dz2 * dz3 <= 0 and dz3 * dz1 <= 0:
@@ -282,7 +291,11 @@ class Algorithms:
                     e = Edge(a, b)
 
                     # Add contour to list of contours
-                    contours.append(e)
+                    if contour_counter % 5 == 0:
+                        index_contours.append(e)
+
+                    else:
+                        contours.append(e)
 
                 # Edges (p3,p1) and (p1,p2) are intersected by plane
                 elif dz3 * dz1 <= 0 and dz1 * dz2 <= 0:
@@ -294,9 +307,13 @@ class Algorithms:
                     e = Edge(a, b)
 
                     # Add contour to list of contours
-                    contours.append(e)
+                    if contour_counter % 5 == 0:
+                        index_contours.append(e)
 
-        return contours
+                    else:
+                        contours.append(e)
+
+        return contours, index_contours
     
     """Analýza sklonu
     vstup: trojúhelník - 3 vrcholy (p1, p2, p3)

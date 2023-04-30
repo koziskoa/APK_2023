@@ -191,9 +191,11 @@ class Ui_MainForm(object):
         zmin = self.Canvas.getZMin()
         zmax = self.Canvas.getZMax()
         dz = self.Canvas.getDZ()
-        contours = a.createContourLines(dt, zmin, zmax, dz)
+        contours, index_contours = a.createContourLines(dt, zmin, zmax, dz)
+        if contours is None:
+            return
         #set results to draw
-        self.Canvas.setContours(contours)
+        self.Canvas.setContours(contours, index_contours)
         self.Canvas.repaint()
 
     def runSlope(self):

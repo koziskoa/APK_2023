@@ -1,4 +1,5 @@
 from QPoint3DF import *
+from math import *
 
 class Edge:
     def __init__(self, start: QPoint3DF, end: QPoint3DF):
@@ -14,9 +15,20 @@ class Edge:
         return self.__end
     
     def SwitchOrientation(self):
-        '''Create new edge with an opposite orientatioin'''
+        '''Create new edge with an opposite orientation'''
         return Edge(self.__end, self.__start)
-    
+
+    def getEdgeCenterX(self):
+        return int((self.__start.x() + self.__end.x())/2)
+
+    def getEdgeCenterY(self):
+        return int((self.__start.y() + self.__end.y())/2)
+
+    def getEdgeAngle(self):
+        dx = self.__end.x() - self.__start.x()
+        dy = self.__end.y() - self.__start.y()
+        return atan2(dy, dx)
+
     def __eq__(self, other) -> bool:
         '''compare two edges'''
         return (self.__start == other.__start) and (self.__end == other.__end)
