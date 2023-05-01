@@ -80,9 +80,10 @@ class Draw(QWidget):
         self.__points: list[QPoint3DF] = []
         self.__dt : list[Edge] = []
         self.__contours: list[Edge] = []
-        self.__index_contours: list[Edge] = []
+        self.__index_contours = []
         self.__triangles: list[Triangle] = []
         self.__switch_mode = -1
+        self.__draw_labels = True
         self.__zmin = 0
         self.__zmax = 1650
         self.__dz = 10
@@ -141,8 +142,7 @@ class Draw(QWidget):
         #Create graphic object
         qp = QPainter(self)
         pen = QPen()
-        font = QFont()
-        font.setFamily('Times')
+        font = QFont('Arial', 7)
         font.setBold(True)
         qp.setFont(font)
         #Start draw
@@ -156,9 +156,8 @@ class Draw(QWidget):
                 # get triangles slope
                 slope = t.getSlope()
 
-
                 # convert to color
-                col = int((slope*510)/(2*pi))
+                col = int(slope*(510/pi))
                 #create color
                 color = QColor(col, col, col)
                 qp.setBrush(color)
@@ -195,11 +194,12 @@ class Draw(QWidget):
         for edge in self.__contours:
             qp.drawLine(int(edge.getStart().x()), int(edge.getStart().y()), int(edge.getEnd().x()), int(edge.getEnd().y()))
 
-        pen.setWidth(3)
+        pen.setWidth(2)
         pen.setColor(Qt.GlobalColor.darkRed)
         qp.setPen(pen)
 
-        for edge in self.__index_contours:
+        index_contours = [contour[0] for contour in self.__index_contours]
+        for edge in index_contours:
             qp.drawLine(int(edge.getStart().x()), int(edge.getStart().y()), int(edge.getEnd().x()), int(edge.getEnd().y()))
 
         # Set attributes
@@ -212,34 +212,21 @@ class Draw(QWidget):
             qp.drawEllipse(int(point.x()) - r, int(point.y()) - r, 2 * r, 2 * r)  # x- r a y - r
             #qp.drawText(int(point.x())-5,int(point.y())+5, str(int(point.getZ())))
 
-        #qp.setPen(pen)
-
-        index_contours_labels = self.__index_contours[::30]
-        for edge in index_contours_labels:
-            angle = edge.getEdgeAngle()
-            if angle < 0:
-                angle += 2*pi
-            angle = angle * 180/pi
-            qp.translate(edge.getEdgeCenterX(), edge.getEdgeCenterY())
-            qp.rotate(angle+180)
-            qp.setOpacity(1)
-            qp.setBrush(Qt.GlobalColor.white)
-            pen.setColor(Qt.GlobalColor.white)
-            qp.setPen(pen)
-            qp.drawRect(QRectF(QPointF(5,-5), QSizeF(25,12)).normalized())
-            qp.setOpacity(1)
-            pen.setColor(Qt.GlobalColor.darkRed)
-            qp.setPen(pen)
-            qp.drawText(5, 5, str(edge.getStart().getZ()))
-            qp.rotate(-(angle+180))
-            qp.translate(-edge.getEdgeCenterX(), -edge.getEdgeCenterY())
-        
-
-        
-        
-        # Set attributes
-        # qp.setPen(Qt.GlobalColor.blue)
-        # qp.setBrush(Qt.GlobalColor.yellow)
+        if self.__draw_labels:
+            index_contours_labels = self.__index_contours[::20]
+            for edge in index_contours_labels:
+                angle = edge[1] * 180/pi
+                qp.translate(edge[0].getEdgeCenterX(), edge[0].getEdgeCenterY())
+                qp.rotate(angle+180)
+                qp.setBrush(Qt.GlobalColor.white)
+                pen.setColor(Qt.GlobalColor.white)
+                qp.setPen(pen)
+                qp.drawRect(QRectF(QPointF(-5,-5), QSizeF(20,12)))
+                pen.setColor(Qt.GlobalColor.darkRed)
+                qp.setPen(pen)
+                qp.drawText(-5, 5, str(edge[0].getStart().getZ()))
+                qp.rotate(-(angle+180))
+                qp.translate(-edge[0].getEdgeCenterX(), -edge[0].getEdgeCenterY())
 
         #End draw
         qp.end()
@@ -310,6 +297,16 @@ class Draw(QWidget):
         self.__contours = []
         self.__index_contours = []
         self.__triangles = []
+
+    def clearContourLines(self):
+        self.__contours = []
+        self.__index_contours = []
+
+    def clearSlopeAspect(self):
+        self.__switch_mode = -1
+
+    def showContourLinesLabels(self):
+        self.__draw_labels = not self.__draw_labels
 
     def loadData(self, data):
         """Loads input JSON or GeoJSON file."""

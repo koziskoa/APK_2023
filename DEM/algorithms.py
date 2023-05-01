@@ -239,13 +239,18 @@ class Algorithms:
 
         # Create contour lines inside the given interval and step
         contours: list[Edge] = []
-        index_contours: list[Edge] = []
+        index_contours = []
         #Process all triangles
         for i in range(0,len(dt),3):
             #Get triangle vertices
             p1 = dt[i].getStart()
             p2 = dt[i].getEnd()
             p3 = dt[i+1].getEnd()
+
+            #Get normal vector of plane
+            nx, ny, nz = self.getNormalVector(p1, p2, p3)
+            label_orientation = atan2(ny, nx)
+            label_orientation += pi/2
 
             # Get elevations of points
             z1 = p1.getZ()
@@ -276,7 +281,7 @@ class Algorithms:
 
                     #Add contour to list of contours
                     if contour_counter % 5 == 0:
-                        index_contours.append(e)
+                        index_contours.append([e, label_orientation])
 
                     else:
                         contours.append(e)
@@ -292,7 +297,7 @@ class Algorithms:
 
                     # Add contour to list of contours
                     if contour_counter % 5 == 0:
-                        index_contours.append(e)
+                        index_contours.append([e, label_orientation])
 
                     else:
                         contours.append(e)
@@ -308,7 +313,7 @@ class Algorithms:
 
                     # Add contour to list of contours
                     if contour_counter % 5 == 0:
-                        index_contours.append(e)
+                        index_contours.append([e, label_orientation])
 
                     else:
                         contours.append(e)

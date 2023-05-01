@@ -103,6 +103,21 @@ class Ui_MainForm(object):
         icon8.addPixmap(QtGui.QPixmap("icons/about.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionAbout.setIcon(icon8)
         self.actionAbout.setObjectName("actionAbout")
+        self.actionClearSlopeAspect = QtGui.QAction(parent=MainForm)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap("icons/clearslopeaspect.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionClearSlopeAspect.setIcon(icon9)
+        self.actionClearSlopeAspect.setObjectName("actionClearSlopeAspect")
+        self.actionClearContours = QtGui.QAction(parent=MainForm)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap("icons/clearcontours.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionClearContours.setIcon(icon10)
+        self.actionClearContours.setObjectName("actionClearContours")
+        self.actionShowContourLabels = QtGui.QAction(parent=MainForm)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap("icons/contourlabels.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionShowContourLabels.setIcon(icon11)
+        self.actionShowContourLabels.setObjectName("actionShowContourLabels")
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
@@ -111,6 +126,10 @@ class Ui_MainForm(object):
         self.menuAnalysis.addAction(self.actionAnalyze_aspect)
         self.menuAnalysis.addAction(self.actionAnalyze_slope)
         self.menuSettings.addAction(self.actionContourSettings)
+        self.menuView.addAction(self.actionClearContours)
+        self.menuView.addAction(self.actionShowContourLabels)
+        self.menuView.addAction(self.actionClearSlopeAspect)
+        self.menuView.addSeparator()
         self.menuView.addAction(self.actionClear)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -127,6 +146,9 @@ class Ui_MainForm(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionContourSettings)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionClearContours)
+        self.toolBar.addAction(self.actionShowContourLabels)
+        self.toolBar.addAction(self.actionClearSlopeAspect)
         self.toolBar.addAction(self.actionClear)
         
         # connect singals and slots
@@ -139,6 +161,9 @@ class Ui_MainForm(object):
         self.actionExit.triggered.connect(self.exitClick)
         self.actionContourSettings.triggered.connect(self.runContourSettings)
         self.actionOpen.triggered.connect(self.processFile)
+        self.actionClearSlopeAspect.triggered.connect(self.clearSlopeAspectClick)
+        self.actionClearContours.triggered.connect(self.clearContoursClick)
+        self.actionShowContourLabels.triggered.connect(self.showContourLabelsClick)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -158,8 +183,11 @@ class Ui_MainForm(object):
         self.actionCreate_lines.setText(_translate("MainForm", "Create lines"))
         self.actionAnalyze_aspect.setText(_translate("MainForm", "Analyze aspect"))
         self.actionAnalyze_slope.setText(_translate("MainForm", "Analyze slope"))
-        self.actionContourSettings.setText(_translate("MainForm", "Contour Settings"))
-        self.actionClear.setText(_translate("MainForm", "Clear"))
+        self.actionContourSettings.setText(_translate("MainForm", "Contour settings..."))
+        self.actionShowContourLabels.setText(_translate("MainForm", "Show contour labels"))
+        self.actionClearContours.setText(_translate("MainForm", "Clear contour lines"))
+        self.actionClearSlopeAspect.setText(_translate("MainForm", "Clear slope/aspect"))
+        self.actionClear.setText(_translate("MainForm", "Clear all"))
         self.actionAbout.setText(_translate("MainForm", "About..."))
 
     def runDT(self):
@@ -225,6 +253,18 @@ class Ui_MainForm(object):
     def clearButton(self):
         """Clears canvas."""
         self.Canvas.clearCanvas()
+        self.Canvas.repaint()
+
+    def clearSlopeAspectClick(self):
+        self.Canvas.clearSlopeAspect()
+        self.Canvas.repaint()
+
+    def clearContoursClick(self):
+        self.Canvas.clearContourLines()
+        self.Canvas.repaint()
+
+    def showContourLabelsClick(self):
+        self.Canvas.showContourLinesLabels()
         self.Canvas.repaint()
 
     def aboutClick(self):

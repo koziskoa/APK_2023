@@ -24,11 +24,6 @@ class Edge:
     def getEdgeCenterY(self):
         return int((self.__start.y() + self.__end.y())/2)
 
-    def getEdgeAngle(self):
-        dx = self.__end.x() - self.__start.x()
-        dy = self.__end.y() - self.__start.y()
-        return atan2(dy, dx)
-
     def __eq__(self, other) -> bool:
         '''compare two edges'''
         return (self.__start == other.__start) and (self.__end == other.__end)
