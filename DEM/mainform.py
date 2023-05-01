@@ -1,6 +1,6 @@
 """ 
-This program serves for creating and computing digital elevation model (DEM) from a point cloud. 
-As part of the programme it is possible to compute contour lines, slope and aspect of DEM.
+This application serves for creating and computing digital elevation model (DEM) from a given point cloud.
+As part of the application it is possible to generate contour lines, slope and aspect of DEM.
 """
 
 from PyQt6 import QtCore, QtGui, QtWidgets
@@ -183,7 +183,7 @@ class Ui_MainForm(object):
         self.actionCreate_lines.setText(_translate("MainForm", "Create lines"))
         self.actionAnalyze_aspect.setText(_translate("MainForm", "Analyze aspect"))
         self.actionAnalyze_slope.setText(_translate("MainForm", "Analyze slope"))
-        self.actionContourSettings.setText(_translate("MainForm", "Contour settings..."))
+        self.actionContourSettings.setText(_translate("MainForm", "Contour properties"))
         self.actionShowContourLabels.setText(_translate("MainForm", "Show contour labels"))
         self.actionClearContours.setText(_translate("MainForm", "Clear contour lines"))
         self.actionClearSlopeAspect.setText(_translate("MainForm", "Clear slope/aspect"))
@@ -191,63 +191,73 @@ class Ui_MainForm(object):
         self.actionAbout.setText(_translate("MainForm", "About..."))
 
     def runDT(self):
-        """Gets Delaunay triangulation from points"""
+        """Performs Delaunay triangulation of a given point cloud."""
         points = self.Canvas.getPoints()
+        # Point cloud list empty
         if points == []:
             return
-        #Run triangulation
+        # Run triangulation
         a = Algorithms()
         dt = a.createDT(points)
-
-        #Set results
+        # Set results
         self.Canvas.setDT(dt)
         self.Canvas.repaint()
 
     def runContourSettings(self):
+        """Opens a dialog window with contour parameters."""
         self.Canvas.setContourSettings()
 
     def runContourLines(self):
-        """Analyzes contour lines from DEM
-        z_min, z_max, dz
-            na vstupu list hran - spustit DT, nebo získat delaunyho triangulaci - v praxi pořešit asi oboje
-            spustíme vl metodu create contour lines - bude mít nějaké parametry - zmin, zmax, dz - return cl
-            vrátit to třídy draw a vykreslit - set.coutourlines
-            repaint()
-        """
+        """Generates contour lines."""
         a = Algorithms()
+        # Get list of DT edges
         dt = self.Canvas.getDT()
+        # DT list is empty
         if dt == []:
             return
+        # Get Z coordinates
         zmin = self.Canvas.getZMin()
         zmax = self.Canvas.getZMax()
         dz = self.Canvas.getDZ()
+        # Get list of contours and index contours
         contours, index_contours = a.createContourLines(dt, zmin, zmax, dz)
+        # Return if contour line generation was not possible
         if contours is None:
             return
-        #set results to draw
+        # Set results
         self.Canvas.setContours(contours, index_contours)
         self.Canvas.repaint()
 
     def runSlope(self):
-        """Analyzes DEM slope"""
+        """Analyzes DEM slope."""
+        # Get list of DT edges
         dt = self.Canvas.getDT()
+        # DT list is empty
         if dt == []:
             return
         a = Algorithms()
+        # Get list of triangles with stored slope information
         dtm = a.analyzeDTMSlope(dt)
+        # Set switch to 0 to draw slope polygons
         self.Canvas.switchSlopeAspect(0)
-        self.Canvas.setSlope(dtm)
+        self.Canvas.setSlopeAspect(dtm)
+        # Set results
         self.Canvas.repaint()
 
     def runAspect(self):
-        """Analyzes DEM aspect"""
+        """Analyzes DEM aspect."""
+        # Get list of DT edges
         dt = self.Canvas.getDT()
+        # DT list is empty
         if dt == []:
             return
         a = Algorithms()
+        # Get list of triangles with stored aspect information
         dtm = a.analyzeDTMAspect(dt)
+        # Set switch to 1 to draw aspect polygons
         self.Canvas.switchSlopeAspect(1)
-        self.Canvas.setAspect(dtm)
+        self.Canvas.setSlopeAspect(dtm)
+        # Set results
         self.Canvas.repaint()
 
     def clearButton(self):
@@ -256,14 +266,17 @@ class Ui_MainForm(object):
         self.Canvas.repaint()
 
     def clearSlopeAspectClick(self):
+        """Removes slope/aspect polygons."""
         self.Canvas.clearSlopeAspect()
         self.Canvas.repaint()
 
     def clearContoursClick(self):
+        """Removes contour lines."""
         self.Canvas.clearContourLines()
         self.Canvas.repaint()
 
     def showContourLabelsClick(self):
+        """Shows/hides contour line labels."""
         self.Canvas.showContourLinesLabels()
         self.Canvas.repaint()
 
@@ -283,23 +296,23 @@ class Ui_MainForm(object):
         # Return if no file has been opened
         if filename == "":
             return None
-        # Return data from JSON
+        # Load data from CSV
         with open(filename, 'r', encoding='utf-8-sig') as f:
             data = csv.reader(f, delimiter = ';')
             self.Canvas.loadData(data)
 
     def processFile(self):
-        """Handles opening and loading the data."""
+        """Handles opening and loading data."""
         # Open file
         data = self.openFile()
         # Return if no file has been opened
         if data == None:
             return
-        # Clear canvas for new polygon layer
+        # Clear canvas for new point layer
         self.Canvas.clearCanvas()
         # Try to load and process the data
         correct_data = self.Canvas.loadData(data)
-        # Alert the user if JSON has incorrect formatting
+        # Alert the user if CSV has incorrect formatting
         if correct_data == False:
             dlg = QtWidgets.QMessageBox()
             dlg.setWindowTitle("Error Message")
