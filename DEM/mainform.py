@@ -1,6 +1,6 @@
 """ 
-This program serves for creating and computing digital elevation model (DEM) from a point cloud. 
-As part of the programme it is possible to compute contour lines, slope and aspect of DEM.
+This application serves for creating and computing digital elevation model (DEM) from a given point cloud.
+As part of the application it is possible to generate contour lines, slope and aspect of DEM.
 """
 
 from PyQt6 import QtCore, QtGui, QtWidgets
@@ -8,11 +8,13 @@ from draw import Draw
 from Edge import *
 from QPoint3DF import *
 from algorithms import *
+from dialog import *
+import csv
 
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
         MainForm.setObjectName("MainForm")
-        MainForm.resize(815, 600)
+        MainForm.showMaximized()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -86,11 +88,11 @@ class Ui_MainForm(object):
         icon5.addPixmap(QtGui.QPixmap("icons/slope2.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionAnalyze_slope.setIcon(icon5)
         self.actionAnalyze_slope.setObjectName("actionAnalyze_slope")
-        self.actionSettings = QtGui.QAction(parent=MainForm)
+        self.actionContourSettings = QtGui.QAction(parent=MainForm)
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap("icons/settings.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionSettings.setIcon(icon6)
-        self.actionSettings.setObjectName("actionSettings")
+        self.actionContourSettings.setIcon(icon6)
+        self.actionContourSettings.setObjectName("actionContourSettings")
         self.actionClear = QtGui.QAction(parent=MainForm)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap("icons/clear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
@@ -101,13 +103,33 @@ class Ui_MainForm(object):
         icon8.addPixmap(QtGui.QPixmap("icons/about.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionAbout.setIcon(icon8)
         self.actionAbout.setObjectName("actionAbout")
+        self.actionClearSlopeAspect = QtGui.QAction(parent=MainForm)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap("icons/clearslopeaspect.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionClearSlopeAspect.setIcon(icon9)
+        self.actionClearSlopeAspect.setObjectName("actionClearSlopeAspect")
+        self.actionClearContours = QtGui.QAction(parent=MainForm)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap("icons/clearcontours.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionClearContours.setIcon(icon10)
+        self.actionClearContours.setObjectName("actionClearContours")
+        self.actionShowContourLabels = QtGui.QAction(parent=MainForm)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap("icons/contourlabels.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionShowContourLabels.setIcon(icon11)
+        self.actionShowContourLabels.setObjectName("actionShowContourLabels")
         self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
         self.menuAnalysis.addAction(self.actionCreate_DMT)
         self.menuAnalysis.addAction(self.actionCreate_lines)
         self.menuAnalysis.addAction(self.actionAnalyze_aspect)
         self.menuAnalysis.addAction(self.actionAnalyze_slope)
-        self.menuSettings.addAction(self.actionSettings)
+        self.menuSettings.addAction(self.actionContourSettings)
+        self.menuView.addAction(self.actionClearContours)
+        self.menuView.addAction(self.actionShowContourLabels)
+        self.menuView.addAction(self.actionClearSlopeAspect)
+        self.menuView.addSeparator()
         self.menuView.addAction(self.actionClear)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -122,8 +144,11 @@ class Ui_MainForm(object):
         self.toolBar.addAction(self.actionAnalyze_slope)
         self.toolBar.addAction(self.actionAnalyze_aspect)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionSettings)
+        self.toolBar.addAction(self.actionContourSettings)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionClearContours)
+        self.toolBar.addAction(self.actionShowContourLabels)
+        self.toolBar.addAction(self.actionClearSlopeAspect)
         self.toolBar.addAction(self.actionClear)
         
         # connect singals and slots
@@ -134,6 +159,11 @@ class Ui_MainForm(object):
         self.actionClear.triggered.connect(self.clearButton)
         self.actionAbout.triggered.connect(self.aboutClick)
         self.actionExit.triggered.connect(self.exitClick)
+        self.actionContourSettings.triggered.connect(self.runContourSettings)
+        self.actionOpen.triggered.connect(self.processFile)
+        self.actionClearSlopeAspect.triggered.connect(self.clearSlopeAspectClick)
+        self.actionClearContours.triggered.connect(self.clearContoursClick)
+        self.actionShowContourLabels.triggered.connect(self.showContourLabelsClick)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
@@ -147,70 +177,107 @@ class Ui_MainForm(object):
         self.menuView.setTitle(_translate("MainForm", "View"))
         self.menuHelp.setTitle(_translate("MainForm", "Help"))
         self.toolBar.setWindowTitle(_translate("MainForm", "toolBar"))
-        self.actionOpen.setText(_translate("MainForm", "Open"))
+        self.actionOpen.setText(_translate("MainForm", "Open..."))
         self.actionExit.setText(_translate("MainForm", "Exit"))
         self.actionCreate_DMT.setText(_translate("MainForm", "Create DMT"))
         self.actionCreate_lines.setText(_translate("MainForm", "Create lines"))
         self.actionAnalyze_aspect.setText(_translate("MainForm", "Analyze aspect"))
         self.actionAnalyze_slope.setText(_translate("MainForm", "Analyze slope"))
-        self.actionSettings.setText(_translate("MainForm", "Settings"))
-        self.actionClear.setText(_translate("MainForm", "Clear"))
-        self.actionAbout.setText(_translate("MainForm", "About"))
+        self.actionContourSettings.setText(_translate("MainForm", "Contour properties"))
+        self.actionShowContourLabels.setText(_translate("MainForm", "Show contour labels"))
+        self.actionClearContours.setText(_translate("MainForm", "Clear contour lines"))
+        self.actionClearSlopeAspect.setText(_translate("MainForm", "Clear slope/aspect"))
+        self.actionClear.setText(_translate("MainForm", "Clear all"))
+        self.actionAbout.setText(_translate("MainForm", "About..."))
 
     def runDT(self):
-        """Gets Delaunay triangulation from points"""
+        """Performs Delaunay triangulation of a given point cloud."""
         points = self.Canvas.getPoints()
-
-        #Run triangulation
+        # Point cloud list empty
+        if points == []:
+            return
+        # Run triangulation
         a = Algorithms()
         dt = a.createDT(points)
-
-        #Set results
+        # Set results
         self.Canvas.setDT(dt)
         self.Canvas.repaint()
 
-    def runContourLines(self):
-        """Analyzes contour lines from DEM
-        z_min, z_max, dz
-            na vstupu list hran - spustit DT, nebo získat delaunyho triangulaci - v praxi pořešit asi oboje
-            spustíme vl metodu create contour lines - bude mít nějaké parametry - zmin, zmax, dz - return cl
-            vrátit to třídy draw a vykreslit - set.coutourlines
-            repaint()
-        """
-        zmin = 0
-        zmax = 1650
-        dz = 10
-        
-        dt = self. Canvas.getDT()
+    def runContourSettings(self):
+        """Opens a dialog window with contour parameters."""
+        self.Canvas.setContourSettings()
 
-        # create contour lines
+    def runContourLines(self):
+        """Generates contour lines."""
         a = Algorithms()
-        contours = a.createContourLines(dt, zmin, zmax, dz)
-        #set results to draw
-        self.Canvas.setContours(contours)
+        # Get list of DT edges
+        dt = self.Canvas.getDT()
+        # DT list is empty
+        if dt == []:
+            return
+        # Get Z coordinates
+        zmin = self.Canvas.getZMin()
+        zmax = self.Canvas.getZMax()
+        dz = self.Canvas.getDZ()
+        # Get list of contours and index contours
+        contours, index_contours = a.createContourLines(dt, zmin, zmax, dz)
+        # Return if contour line generation was not possible
+        if contours is None:
+            return
+        # Set results
+        self.Canvas.setContours(contours, index_contours)
         self.Canvas.repaint()
 
     def runSlope(self):
-        """Analyzes DEM slope"""
+        """Analyzes DEM slope."""
+        # Get list of DT edges
         dt = self.Canvas.getDT()
+        # DT list is empty
+        if dt == []:
+            return
         a = Algorithms()
+        # Get list of triangles with stored slope information
         dtm = a.analyzeDTMSlope(dt)
+        # Set switch to 0 to draw slope polygons
         self.Canvas.switchSlopeAspect(0)
-        self.Canvas.setSlope(dtm)
+        self.Canvas.setSlopeAspect(dtm)
+        # Set results
         self.Canvas.repaint()
 
     def runAspect(self):
-        """Analyzes DEM aspect"""
+        """Analyzes DEM aspect."""
+        # Get list of DT edges
         dt = self.Canvas.getDT()
+        # DT list is empty
+        if dt == []:
+            return
         a = Algorithms()
+        # Get list of triangles with stored aspect information
         dtm = a.analyzeDTMAspect(dt)
+        # Set switch to 1 to draw aspect polygons
         self.Canvas.switchSlopeAspect(1)
-        self.Canvas.setAspect(dtm)
+        self.Canvas.setSlopeAspect(dtm)
+        # Set results
         self.Canvas.repaint()
 
     def clearButton(self):
         """Clears canvas."""
         self.Canvas.clearCanvas()
+        self.Canvas.repaint()
+
+    def clearSlopeAspectClick(self):
+        """Removes slope/aspect polygons."""
+        self.Canvas.clearSlopeAspect()
+        self.Canvas.repaint()
+
+    def clearContoursClick(self):
+        """Removes contour lines."""
+        self.Canvas.clearContourLines()
+        self.Canvas.repaint()
+
+    def showContourLabelsClick(self):
+        """Shows/hides contour line labels."""
+        self.Canvas.showContourLinesLabels()
         self.Canvas.repaint()
 
     def aboutClick(self):
@@ -221,6 +288,37 @@ class Ui_MainForm(object):
     def exitClick(self):
         """Closes the application."""
         sys.exit()
+
+    def openFile(self):
+        """Opens CSV file."""
+        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input_files/.",
+                                                  filter="CSV file (*.csv)")
+        # Return if no file has been opened
+        if filename == "":
+            return None
+        # Load data from CSV
+        with open(filename, 'r', encoding='utf-8-sig') as f:
+            data = csv.reader(f, delimiter = ';')
+            self.Canvas.loadData(data)
+
+    def processFile(self):
+        """Handles opening and loading data."""
+        # Open file
+        data = self.openFile()
+        # Return if no file has been opened
+        if data == None:
+            return
+        # Clear canvas for new point layer
+        self.Canvas.clearCanvas()
+        # Try to load and process the data
+        correct_data = self.Canvas.loadData(data)
+        # Alert the user if CSV has incorrect formatting
+        if correct_data == False:
+            dlg = QtWidgets.QMessageBox()
+            dlg.setWindowTitle("Error Message")
+            dlg.setText("Invalid CSV file")
+            dlg.exec()
+            return
 
 if __name__ == "__main__":
     import sys
