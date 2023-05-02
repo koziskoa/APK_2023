@@ -550,4 +550,4 @@ class Algorithms:
         return sigma1, dist1, sigma2, dist2
 
     # Set default convex hull algorithm
-    ch_alg = jarvisScan
+    #ch_alg = jarvisScan
