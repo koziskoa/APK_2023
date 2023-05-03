@@ -195,6 +195,7 @@ class Ui_MainForm(object):
         points = self.Canvas.getPoints()
         # Point cloud list empty
         if points == []:
+            self.alert()
             return
         # Run triangulation
         a = Algorithms()
@@ -214,6 +215,7 @@ class Ui_MainForm(object):
         dt = self.Canvas.getDT()
         # DT list is empty
         if dt == []:
+            self.alert(type_alert=1)
             return
         # Get Z coordinates
         zmin = self.Canvas.getZMin()
@@ -234,6 +236,7 @@ class Ui_MainForm(object):
         dt = self.Canvas.getDT()
         # DT list is empty
         if dt == []:
+            self.alert(type_alert=2)
             return
         a = Algorithms()
         # Get list of triangles with stored slope information
@@ -250,6 +253,7 @@ class Ui_MainForm(object):
         dt = self.Canvas.getDT()
         # DT list is empty
         if dt == []:
+            self.alert(type_alert=3)
             return
         a = Algorithms()
         # Get list of triangles with stored aspect information
@@ -289,6 +293,17 @@ class Ui_MainForm(object):
         """Closes the application."""
         sys.exit()
 
+    def alert(self, type_alert = 0):
+        """Creates a popup iwith concrete report based on alert type."""
+        alerts = ["No data is loaded.", "No DT has been created. Create DT first, then run contours.", "No DT has been created. Create DT first, then run slope.", "No DT has been created. Create DT first, then run aspect."]
+        dlg = QtWidgets.QMessageBox()
+        dlg.setWindowTitle("Report")
+        for alert in range(len(alerts)):
+            if alert == type_alert:
+                dlg.setText(alerts[alert])
+                break
+        dlg.exec()
+    
     def openFile(self):
         """Opens CSV file."""
         filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input_files/.",
