@@ -294,8 +294,11 @@ class Ui_MainForm(object):
         sys.exit()
 
     def alert(self, type_alert = 0):
-        """Creates a popup iwith concrete report based on alert type."""
-        alerts = ["No data is loaded.", "No DT has been created. Create DT first, then run contours.", "No DT has been created. Create DT first, then run slope.", "No DT has been created. Create DT first, then run aspect."]
+        """Creates a popup with report according to the type of alert."""
+        alerts = ["No data is loaded.", 
+                  "No DT has been created. Create DT first, then run contours.", 
+                  "No DT has been created. Create DT first, then run slope.", 
+                  "No DT has been created. Create DT first, then run aspect."]
         dlg = QtWidgets.QMessageBox()
         dlg.setWindowTitle("Report")
         for alert in range(len(alerts)):
