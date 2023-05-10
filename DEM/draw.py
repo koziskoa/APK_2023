@@ -100,7 +100,7 @@ class Draw(QWidget):
         """Sets input contour parameters."""
         a = Algorithms()
         # Execute contour dialog window
-        dialog = InputDialog()
+        dialog = InputDialog(self.__zmin, self.__zmax, self.__dz)
         # On signal accepted
         if dialog.exec():
             # Get input values

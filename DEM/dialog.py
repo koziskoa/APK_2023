@@ -19,16 +19,22 @@ class InputDialog(QDialog):
     getInputs():
        Returns input values.
         """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, prevzmin, prevzmax, prevdz, *args, **kwargs):
         """Constructs QDialog window."""
         super().__init__(*args, **kwargs)
         # Initialize necessary objects
+        from draw import Draw
+        d = Draw()
         self.setWindowTitle("Contour Properties")
         self.zmin = QLineEdit(self)
         self.zmax = QLineEdit(self)
         self.dz = QLineEdit(self)
         self.ok_button = QPushButton("Ok", self)
         self.cancel_button = QPushButton("Cancel", self)
+        # Set previously used values as placeholder text
+        self.zmin.setPlaceholderText(str(prevzmin))
+        self.zmax.setPlaceholderText(str(prevzmax))
+        self.dz.setPlaceholderText(str(prevdz))
         # Create layout
         layout = QFormLayout(self)
         layout.addRow("Minimum altitude [m]", self.zmin)
