@@ -6,73 +6,35 @@ from settings import *
 
 class Draw(QWidget):
     """
-    A class to process and draw polygons on canvas.
+    A class to process and draw lines on canvas.
 
     ---
 
     Attributes
     ----------
-    __polyg_list (list):
-        List of input polygons
-    __er_list (list):
+    __add_L (bool):
+        Input switch for line/barrier
+    __L (QPolygonF):
         List of created enclosing rectangles
-    __ch_list (list):
+    __B (QPolygonF):
         List of created convex hulls
-
-    Methods
-    -------
-    paintEvent(e:QPaintEvent):
-        Handles drawing of objects on canvas
-
-    clearCanvas():
-        Clears canvas.
-
-    clearERs():
-        Clears enclosing rectangles.
-
-    clearCHs():
-        Clears convex hulls.
-
-    getPolygonList():
-        Returns list of input polygons.
-
-    getEnclosingRectangles():
-        Returns list of enclosing rectangles.
-
-    getConvexHulls():
-        Returns list of convex hulls.
-
-    setEnclosingRectangles():
-        Sets enclosing rectangles.
-
-    setConvexHulls():
-        Sets convex hulls.
-
-    resizePolygons(xmin, ymin, xmax, ymax):
-        Resizes input data to fit to display.
-
-    findBoundingPoints(p:QPointF, xmin, ymin, xmax, ymax):
-        Finds minimum and maximum coordinates of bounding box around input polygons.
-
-    loadData(data):
-        Loads input JSON file.
+    __LD (QPolygonF):
+        List of created convex hulls
+    xmin, ymin, xmax, ymax (float):
+        Bounding points for objects on canvas
+    L_is_normalized (bool):
+        Flag for line adjustment
+    B_is_normalized (bool):
+        Flag for barrier adjustment
     """
 
     def __init__(self, *args, **kwargs):
-        """
-        Constructs all the necessary attributes for Draw object.
-
-            Parameters:
-                __polyg_list (list): List of input polygons.
-                __er_list (list): List of created enclosing rectangles.
-                __ch_list (list): List of created convex hulls.
-        """
+        """Constructs all the necessary attributes for Draw object."""
         super().__init__(*args, **kwargs)
         self.__add_L = True
         self.__L = QPolygonF()
         self.__B = QPolygonF()
         self.__LD = QPolygonF()
-        self.__add_vertex = True
         self.xmin = inf
         self.xmax = -inf
         self.ymin = inf
@@ -81,52 +43,44 @@ class Draw(QWidget):
         self.B_is_normalized = True
 
     def paintEvent(self, e:QPaintEvent):
-        #Draw polygon
-
+        """Handles drawing of objects on canvas."""
         #Create graphic object
         qp = QPainter(self)
-
         #Start draw
         qp.begin(self)
-
-        #Set attributes
+        #Set attributes for line
         qp.setPen(Qt.GlobalColor.black)
-
-        #Draw L
+        #Draw line
         qp.drawPolyline(self.__L)
-
-        # Set attributes
+        # Set attributes for barrier
         qp.setPen(Qt.GlobalColor.blue)
-
-        # Draw B
+        # Draw barrier
         qp.drawPolyline(self.__B)
-
-        # Set attributes
+        # Set attributes for displaced line
         qp.setPen(Qt.GlobalColor.red)
-
-        # Draw LD
+        # Draw displaced line
         qp.drawPolyline(self.__LD)
-
         #End draw
         qp.end()
 
-    def switchSource(self):
-        #Move point or add vertex
-        self.__add_vertex = not(self.__add_vertex)
-
     def getL(self):
+        """Returns line."""
         return self.__L
 
     def getB(self):
+        """Returns barrier."""
         return self.__B
 
     def setLD(self, LD_):
+        """Sets displaced line."""
         self.__LD = LD_
 
     def setSource(self, status):
+        """Switches between inputting line or barrier."""
         self.__add_L = status
 
     def clearAll(self):
+        """Clears canvas."""
         self.__L.clear()
         self.__B.clear()
         self.__LD.clear()
@@ -137,11 +91,7 @@ class Draw(QWidget):
 
     def loadData(self, data):
         """Loads input CSV file."""
-        # Initialize min and max coordinates to compute bounding box
-        """xmin = inf
-        ymin = inf
-        xmax = -inf
-        ymax = -inf"""
+        # Load line
         if self.__add_L:
             for row in data:
                 # Convert rows
@@ -150,7 +100,9 @@ class Draw(QWidget):
                 p = QPointF(x, y)
                 self.findBoundingPoints(p)
                 self.__L.append(p)
+            # Set flag resize
             self.L_is_normalized = False
+        # Load barrier
         else:
             for row in data:
                 # Convert rows
@@ -159,13 +111,14 @@ class Draw(QWidget):
                 p = QPointF(x, y)
                 self.findBoundingPoints(p)
                 self.__B.append(p)
+            # Set flag to resize
             self.B_is_normalized = False
         # Adjust canvas according to Krovak
         self.resizeContent()
         self.repaint()
 
     def findBoundingPoints(self, p: QPointF):
-        """Returns minimum and maximum coordinates of bounding box around input points."""
+        """Adjusts minimum and maximum coordinates of bounding box around input lines."""
         if p.x() < self.xmin:
             self.xmin = p.x()
         if p.y() < self.ymin:
@@ -176,43 +129,47 @@ class Draw(QWidget):
             self.ymax = p.y()
 
     def resizeContent(self):
-        """Resizes input data to fit to display."""
-        c = 100
-        canvas_height = self.frameGeometry().height() - c
-        canvas_width = self.frameGeometry().width() - c
+        """Resizes and centers input data to fit to display."""
+        # Constant for window padding
+        C = 100
+        canvas_height = self.frameGeometry().height() - C
+        canvas_width = self.frameGeometry().width() - C
+        # Swap xmin and xmax according to Krovak
         xmin = self.xmax
         xmax = self.xmin
-        # Iterate over each coordinate for repositioning
+        # Iterate over each coordinate for repositioning if it hasn't been done before
+        # For line:
         if not self.L_is_normalized:
             if (self.ymax-self.ymin)/canvas_height > (self.xmax-self.xmin)/canvas_width:
                 for point in self.__L:
-                    new_x = int((point.x() - xmin) * canvas_height / (xmax - xmin)) + c
-                    new_y = int((point.y() - self.ymin) * canvas_height / (self.ymax - self.ymin)) + c/2
+                    new_x = int((point.x() - xmin) * canvas_height / (xmax - xmin)) + C
+                    new_y = int((point.y() - self.ymin) * canvas_height / (self.ymax - self.ymin)) + C/2
                     # Reposition coordinates accordingly
                     point.setX(new_x)
                     point.setY(new_y)
                 self.L_is_normalized = True
             else:
                 for point in self.__L:
-                    new_x = int((point.x() - xmin) * canvas_width / (xmax - xmin)) + c
-                    new_y = int((point.y() - self.ymin) * canvas_width / (self.ymax - self.ymin)) + c/2
+                    new_x = int((point.x() - xmin) * canvas_width / (xmax - xmin)) + C
+                    new_y = int((point.y() - self.ymin) * canvas_width / (self.ymax - self.ymin)) + C/2
                     # Reposition coordinates accordingly
                     point.setX(new_x)
                     point.setY(new_y)
                 self.L_is_normalized = True
+        # For barrier:
         if not self.B_is_normalized:
             if (self.ymax - self.ymin) / canvas_height > (self.xmax - self.xmin) / canvas_width:
                 for point in self.__B:
-                    new_x = int((point.x() - xmin) * canvas_height / (xmax - xmin)) + c
-                    new_y = int((point.y() - self.ymin) * canvas_height / (self.ymax - self.ymin)) + c/2
+                    new_x = int((point.x() - xmin) * canvas_height / (xmax - xmin)) + C
+                    new_y = int((point.y() - self.ymin) * canvas_height / (self.ymax - self.ymin)) + C/2
                     # Reposition coordinates accordingly
                     point.setX(new_x)
                     point.setY(new_y)
                 self.B_is_normalized = True
             else:
                 for point in self.__B:
-                    new_x = int((point.x() - xmin) * canvas_width / (xmax - xmin)) + c
-                    new_y = int((point.y() - self.ymin) * canvas_width / (self.ymax - self.ymin)) + c/2
+                    new_x = int((point.x() - xmin) * canvas_width / (xmax - xmin)) + C
+                    new_y = int((point.y() - self.ymin) * canvas_width / (self.ymax - self.ymin)) + C/2
                     # Reposition coordinates accordingly
                     point.setX(new_x)
                     point.setY(new_y)

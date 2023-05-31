@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import *
 
 class InputDialog(QDialog):
     """
-    A class used to create contour settings dialog.
+    A class used to create spline settings dialog.
     ...
 
     Methods

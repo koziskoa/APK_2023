@@ -33,8 +33,6 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        #self.menuElement = QtWidgets.QMenu(self.menubar)
-        #self.menuElement.setObjectName("menuElement")
         self.menuSimplify = QtWidgets.QMenu(self.menubar)
         self.menuSimplify.setObjectName("menuSimplify")
         self.menuOptions = QtWidgets.QMenu(self.menubar)
@@ -48,11 +46,6 @@ class Ui_MainWindow(object):
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.ToolBarArea.TopToolBarArea, self.toolBar)
-        #self.actionOpen = QtGui.QAction(MainWindow)
-        #icon = QtGui.QIcon()
-        #icon.addPixmap(QtGui.QPixmap("icons/open_file.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        #self.actionOpen.setIcon(icon)
-        #self.actionOpen.setObjectName("actionOpen")
         self.actionElement = QtGui.QAction(MainWindow)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("icons/element.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
@@ -88,25 +81,19 @@ class Ui_MainWindow(object):
         icon7.addPixmap(QtGui.QPixmap("icons/about.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionAbout.setIcon(icon7)
         self.actionAbout.setObjectName("actionAbout")
-        #self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionElement)
         self.menuFile.addAction(self.actionBarrier)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
-        #self.menuElement.addAction(self.actionElement)
-        #self.menuElement.addAction(self.actionBarrier)
         self.menuSimplify.addAction(self.actionDisplace_1_element)
         self.menuSimplify.addSeparator()
         self.menuSimplify.addAction(self.actionClear)
         self.menuOptions.addAction(self.actionSettings)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
-        #self.menubar.addAction(self.menuElement.menuAction())
         self.menubar.addAction(self.menuSimplify.menuAction())
         self.menubar.addAction(self.menuOptions.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-        #self.toolBar.addAction(self.actionOpen)
-        #self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionElement)
         self.toolBar.addAction(self.actionBarrier)
         self.toolBar.addAction(self.actionDisplace_1_element)
@@ -115,12 +102,11 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear)
 
-        #User-defined actions
+        # User-defined actions
         self.actionDisplace_1_element.triggered.connect(self.displaceClick)
-        self.actionElement.triggered.connect(self.drawLineClick)
-        self.actionBarrier.triggered.connect(self.drawBarrierClick)
+        self.actionElement.triggered.connect(self.loadLineClick)
+        self.actionBarrier.triggered.connect(self.loadBarrierClick)
         self.actionClear.triggered.connect(self.clearClick)
-        #self.actionOpen.triggered.connect(self.processFile)
         self.actionAbout.triggered.connect(self.aboutClick)
         self.actionExit.triggered.connect(self.exitClick)
         self.actionSettings.triggered.connect(self.setSplineSettings)
@@ -131,12 +117,10 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Energy Splines"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
-        #self.menuElement.setTitle(_translate("MainWindow", "Input"))
         self.menuSimplify.setTitle(_translate("MainWindow", "Simplify"))
         self.menuOptions.setTitle(_translate("MainWindow", "Options"))
         self.menuHelp.setTitle(_translate("MainForm", "Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
-        #self.actionOpen.setText(_translate("MainWindow", "Open..."))
         self.actionExit.setText(_translate("MainForm", "Exit"))
         self.actionElement.setText(_translate("MainWindow", "Load Element..."))
         self.actionBarrier.setText(_translate("MainWindow", "Load Barrier..."))
@@ -146,23 +130,24 @@ class Ui_MainWindow(object):
         self.actionAbout.setText(_translate("MainForm", "About..."))
 
     def __init__(self):
-        self.__dmin = 50
+        """Initializes default spline parameters."""
+        self.__dmin = 100
         self.__iters = 50
         self.__alpha = 1
         self.__beta = 1000
-        self.__gamma = 1000
-        self.__lamb = 1000
+        self.__gamma = 10
+        self.__lamb = 10
 
     def setSplineSettings(self):
-        """Sets input contour parameters."""
+        """Sets input spline parameters."""
         a = Algorithms()
-        # Execute contour dialog window
+        # Execute spline dialog window
         dialog = InputDialog(self.__dmin, self.__iters, self.__alpha, self.__beta, self.__gamma, self.__lamb)
         # On signal accepted
         if dialog.exec():
             # Get input values
             dmin, iters, alpha, beta, gamma, lamb = dialog.getInputs()
-            # Convert input to int and set values
+            # Convert input to int/float and set values
             try:
                 dmin = int(dmin)
                 iters = int(iters)
@@ -178,20 +163,20 @@ class Ui_MainWindow(object):
                 self.__lamb = lamb
             # Input is string or invalid
             except ValueError:
-                # Set default contour settings and alert the user
+                # Set default spline settings and alert the user
                 self.setSplineDefaultSettings()
                 self.splineInvalidInput()
         else:
             return
 
     def setSplineDefaultSettings(self):
-        """Returns contour settings."""
-        self.__dmin = 50
+        """Sets default spline settings."""
+        self.__dmin = 100
         self.__iters = 50
         self.__alpha = 1
         self.__beta = 1000
-        self.__gamma = 1000
-        self.__lamb = 1000
+        self.__gamma = 10
+        self.__lamb = 10
 
     def splineInvalidInput(self):
         """Opens a popup to inform of invalid input."""
@@ -202,30 +187,29 @@ class Ui_MainWindow(object):
         dlg.exec()
 
     def displaceClick(self):
-        #Get polyline and barrier
+        # Get polyline and barrier
         L = self.Canvas.getL()
         B = self.Canvas.getB()
-
-        #Run displacement
+        # Run displacement
         a = Algorithms()
-        #d, xq, yq = a.getPointLineDistance(100, 100, 0, 100, 100, 90)
         LD = a.minEnergySpline(L, B, self.__alpha, self.__beta, self.__gamma, self.__lamb, self.__dmin, self.__iters)
-
-        #Set results
+        # Set results
         self.Canvas.setLD(LD)
-
-        #Repaint
+        # Repaint
         self.Canvas.repaint()
 
-    def drawLineClick(self):
+    def loadLineClick(self):
+        """Loads input line."""
         self.Canvas.setSource(True)
         self.processFile()
 
-    def drawBarrierClick(self):
+    def loadBarrierClick(self):
+        """Loads input barrier."""
         self.Canvas.setSource(False)
         self.processFile()
 
     def clearClick(self):
+        """Clears canvas."""
         self.Canvas.clearAll()
         self.Canvas.repaint()
 
@@ -248,8 +232,6 @@ class Ui_MainWindow(object):
         # Return if no file has been opened
         if data == None:
             return
-        # Clear canvas for new point layer
-        #self.Canvas.clearCanvas()
         # Try to load and process the data
         correct_data = self.Canvas.loadData(data)
         # Alert the user if CSV has incorrect formatting
