@@ -9,21 +9,12 @@ class Algorithms:
     """
     A class to store algorithms for polygon generalization and other auxiliary methods.
 
-    Methods for creating convex hull
-    ----------
-    jarvisScan(pol:QPolygonF)
-
-    grahamScan(pol:QPolygonF)
     
-    Methods for polygon generalization
+    Methods for line displacement generalization
     ----------
-    minAreaEnclosingRectangle(pol: QPolygonF)
+    minEnergySpline(self, L: list[QPointF], B: list[QPointF], alpha: list[QPointF], beta: float, gamma: float,
+                        lam: float, dmin: float, iters):
 
-    wallAverage(pol:QPolygonF)
-
-    longestEdge(pol:QPolygonF)
-
-    weightedBisector(pol:QPolygonF)
 
     Auxiliary methods
     ----------
@@ -70,6 +61,12 @@ class Algorithms:
 
     setDiagonals(diagonals:list, pol:QPolygonF):
         Returns two longest diagonals of input polygon (convex hull).
+
+    getEuclidDistance(self, x1,y1,x2,y2):
+
+    getPointLineDistance(self, xa, ya, x1, y1, x2, y2):
+
+    getPointLineSegmentDistance(self, xa, ya, x1, y1, x2, y2):
     """
 
     def __init__(self):
@@ -173,25 +170,25 @@ class Algorithms:
                 - všem A[i,i] nastavíme a
                 - A[i+1,i+1] nastavíme b, ale musí to být nějak separatně
         """
-    def createA(self, alpha, beta, gamma, h, m):
-        a = alpha + (2*beta)/h**2 + (6*gamma)/h**4
-        b = -beta/h**2 - (4*gamma)/h**4
-        c = gamma/h**4
+    #def createA(self, alpha, beta, gamma, h, m):
+    #    a = alpha + (2*beta)/h**2 + (6*gamma)/h**4
+    #    b = -beta/h**2 - (4*gamma)/h**4
+    #    c = gamma/h**4
 
-        A = zeros((m,m))
-        for i in range(m):
+    #    A = zeros((m,m))
+    #    for i in range(m):
             # main diagonal element
-            A[i,i] = a
+    #        A[i,i] = a
 
             # pozor na  nedoagonální elementy - je třeba udělat podmínky:
-            if i < (m-1):
-                A[i, i+1] = b
-                A[i+1, i] = b
-            if i < (m-2):
-                A[i, i+2] = c
-                A[i+2, i] = c
+    #        if i < (m-1):
+    #            A[i, i+1] = b
+    #            A[i+1, i] = b
+    #        if i < (m-2):
+    #            A[i, i+2] = c
+    #            A[i+2, i] = c
         
-        return A
+    #    return A
 
     def get2LinesAngle(p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
         """
@@ -550,8 +547,6 @@ class Algorithms:
 
         return sigma1, dist1, sigma2, dist2
 
-    # Set default convex hull algorithm
-    #ch_alg = jarvisScan
     def getEuclidDistance(self, x1, y1, x2, y2):
         # Distance between two points
         dx = x2 - x1
