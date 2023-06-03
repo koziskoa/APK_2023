@@ -1,0 +1,29 @@
+\chapter*{Zadání}
+
+\par S využitím generalizačního operátoru Partial Modification realizujte odsun a částečnou změnu tvaru jednoho blízkého prvku vůči blízkému pevnému prvku (bariéře) tak, aby v generalizované mapě nedošlo k jejich grafickému konfliktu. Hodnotu minimální vzdálenosti prvků \underbar{$d$} volte v závislosti na měřítkovém čísle mapy (např. 1 mm v mapě). Pro implementaci použijte metodu energetických splinů.
+\par Jako vstupní data použijte existující kartografická data (např. silniční či železniční síť, vodstvo), která budou načítána ze dvou textových souborů ve vámi zvoleném formátu.
+\par Grafické rozhraní realizujte s využitím frameworku QT, výsledky generalizačních operací vizualizujte. Porovnejte dosažené výsledky s ruční generalizací prováděnou kartografickým expertem.
+\bigbreak
+
+% insert table
+\par\textbf{\large Hodnocení:}
+\bigbreak
+\begin{center}
+    \begin{tabular}{|p{14.2cm}|c|} 
+     \hline\large
+         \textbf{Krok} & \textbf{Hodnocení}\\ %[0.5ex] 
+             \hline\hline
+             \small Partial Modification: 1 prvek a překážka. & \small20b \\ 
+             \hline
+             \emph{\small Partial Modification: 2 blízké prvky.} & \emph{\small +10b} \\
+             \hline
+             \emph{\small Partial Modification: 2 prvky a překážka.} & \emph{\small +15b} \\
+             \hline
+             \emph{\small Partial Modification: 3 prvky.} & \emph{\small +15b} \\
+             \hline
+             \emph{\small Variabilní počet iterací, polohová chyba menší než grafická přesnost mapy.} & \emph{\small +5b}\\ 
+             \hline
+             \textbf{Max celkem:} & \textbf{55b}\\ %[0.3ex] 
+             \hline
+    \end{tabular}
+\end{center}
